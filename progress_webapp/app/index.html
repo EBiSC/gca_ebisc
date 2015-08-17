@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" xmlns:ng="http://angularjs.org" xmlns:dcc="ignore-dcc" xmlns:ui="ignore-ui" xmlns:fs="ignore-fs" id="ng-app" ng-app="ebiscProgress" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" xmlns:ng="http://angularjs.org" xmlns:dcc="ignore-dcc" xmlns:ui="ignore-ui" xmlns:fs="ignore-fs" id="ng-app" ng-app="ebiscProgress" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" xmlns:ng="http://angularjs.org" xmlns:dcc="ignore-dcc" xmlns:ui="ignore-ui" xmlns:fs="ignore-fs" id="ng-app" ng-app="ebiscProgress" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" xmlns:ng="http://angularjs.org" xmlns:dcc="ignore-dcc" xmlns:ui="ignore-ui" xmlns:fs="ignore-fs" id="ng-app" ng-app="ebiscProgress" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>EBiSC data progress</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>	
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!-- Keep respond after bootstrap css to make it work on IE 8 -->
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <![endif]-->
+
+	<!-- html5 Boilerplate CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+  <link rel="stylesheet" href="css/boilerplate-main.css">
+  <link rel="stylesheet" href="css/app.css">
+
+	<!-- Dangle -->
+	<link rel="stylesheet" href="bower_components/dangle/css/dangle.css">
+
+</head>
+<body role="document">
+  <!--[if lt IE 8]>
+		<h1>EBiSC data progress</h1>
+		<div>
+			<p>The EBiSC data progress website is not compatible with your web browser. If possible, please <a href="http://browsehappy.com/">upgrade your browser</a>. If this is not possible, please contact resequencing-informatics@ebi.ac.uk
+		</div>
+  <![endif]-->
+
+
+  <!-- jQuery must be loaded before angular-->
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+	<!-- angular components -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.28/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.28/angular-route.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.28/angular-resource.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.28/angular-sanitize.min.js"></script>
+
+	<!--[if gte IE 9]><!-->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+			<script src="bower_components/dangle/dist/dangle.min.js"></script>
+	<!--<![endif]-->	 
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js"></script>
+
+
+	<!-- app components -->
+  <script src="js.20150813/app.js"></script>
+  <script src="js.20150813/controllers.js"></script>
+  <script src="js.20150813/services.js"></script>
+
+  <div class="view-container container-fluid" role="main">
+      <div ng-view class="view-frame"></div>
+  </div>
+	  
+</body>
+</html>

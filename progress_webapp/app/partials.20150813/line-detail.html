@@ -1,0 +1,95 @@
+<div class="panel panel-default">
+    <div class="row">
+    <div class="col-md-6"> <h3 ng-bind="LineCtrl.searchName"></h3> </div>
+    <div class="col-md-6">
+      <p><a href="#/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Back to list of cell lines</a></p>
+      <p><a href="#/errors">Categories of errors</a></p>
+    </div>
+    </div>
+    <hr/>
+
+    <div class="alert alert-danger" role="alert" ng-if="LineCtrl.error">
+      <span class="glyphicon glyphicon-exclamation-sign" ></span>
+      <span>No cell lines match the search string: {{LineCtrl.searchName}}</span>
+    </div>
+
+    <div ng-repeat="line in LineCtrl.lines">
+    <table class="table table-responsive">
+    <thead><tr>
+    <th>Field</th> <th>Value</th> <th>Error?</th>
+    </tr></thead>
+
+    <tbody>
+    <tr>
+      <td>Exported by IMS</td>
+      <td ng-class="{danger: !line.IMS.exported}"><span ng-bind="line.IMS.exported ? 'yes' : 'no'"><span></td>
+      <td ng-bind="line.IMS.exported ? '' : 'This cell line is not exported by IMS'"></td>
+    </tr>
+    <tr ng-if="line.IMS.exported">
+      <td>Name according to IMS</td>
+      <td ng-class="{danger: line.IMS.name.error}"><span ng-bind="line.IMS.name.val"><span></td>
+      <td ng-bind="line.IMS.name.error_string"></td>
+    </tr>
+    <tr ng-if="line.IMS.exported">
+      <td>Biosample id according to IMS</td>
+      <td ng-class="{danger: line.IMS.biosample_id.error}"><span ng-bind="line.IMS.biosample_id.val"><span></td>
+      <td ng-bind="line.IMS.biosample_id.error_string"></td>
+    </tr>
+    <tr ng-if="line.IMS.exported">
+      <td>Donor biosample id according to IMS</td>
+      <td ng-class="{danger: line.IMS.donor_biosample_id.error}"><span ng-bind="line.IMS.donor_biosample_id.val"><span></td>
+      <td ng-bind="line.IMS.donor_biosample_id.error_string"></td>
+    </tr>
+    <tr ng-if="line.IMS.exported && line.IMS.alternate_names">
+      <td>Alternate names according to IMS</td>
+      <td><span ng-bind="line.IMS.alternate_names"><span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>Exported by hPSCreg</td>
+      <td ng-class="{danger: !line.hESCreg.exported}"><span ng-bind="line.hESCreg.exported ? 'yes' : 'no'"><span></td>
+      <td ng-bind="line.hESCreg.exported ? '' : 'This cell line is not exported by hPSCreg'"></td>
+    </tr>
+    <tr ng-if="line.hESCreg.exported">
+      <td>Validated by hPSCreg</td>
+      <td ng-class="{danger: !line.hESCreg.validated}"><span ng-bind="line.hESCreg.validated ? 'yes' : 'no'"><span></td>
+      <td ng-bind="line.hESCreg.validated ? '' : 'Cell line is exported by hPSCreg but not validated yet'"></td>
+    </tr>
+    <tr ng-if="line.hESCreg.exported">
+      <td>Name according to hPSCreg</td>
+      <td ng-class="{danger: line.hESCreg.name.error}"><span ng-bind="line.hESCreg.name.val"><span></td>
+      <td ng-bind="line.hESCreg.name.error_string"></td>
+    </tr>
+    <tr ng-if="line.hESCreg.exported">
+      <td>Biosample id according to hPSCreg</td>
+      <td ng-class="{danger: line.hESCreg.biosample_id.error}"><span ng-bind="line.hESCreg.biosample_id.val"><span></td>
+      <td ng-bind="line.hESCreg.biosample_id.error_string"></td>
+    </tr>
+    <tr ng-if="line.hESCreg.exported">
+      <td>Donor biosample id according to hPSCreg</td>
+      <td ng-class="{danger: line.hESCreg.donor_biosample_id.error}"><span ng-bind="line.hESCreg.donor_biosample_id.val"><span></td>
+      <td ng-bind="line.hESCreg.donor_biosample_id.error_string"></td>
+    </tr>
+    <tr ng-if="line.hESCreg.exported && line.hESCreg.alternate_names">
+      <td>Alternate names according to hPSCreg</td>
+      <td><span ng-bind="line.hESCreg.alternate_names"><span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>Exported by Biosamples</td>
+      <td ng-class="{danger: !line.biosample.exported}"><span ng-bind="line.biosample.exported ? 'yes' : 'no'"><span></td>
+      <td ng-bind="line.biosample.exported ? '' : 'This cell line is not exported by Biosamples API'"></td>
+    </tr>
+    <tr ng-if="line.biosample.exported">
+      <td>Biosample id according to Biosamples API</td>
+      <td ng-class="{danger: line.biosample.id.error}"><span ng-bind="line.biosample.id.val"><span></td>
+      <td ng-bind="line.biosample.id.error_string"></td>
+    </tr>
+    <tr ng-if="line.donor_biosample">
+      <td>Donor exported by Biosamples</td>
+      <td ng-class="{danger: !line.donor_biosample.exported}"><span ng-bind="line.donor_biosample.exported ? 'yes' : 'no'"><span></td>
+      <td ng-bind="line.donor_biosample.exported ? '' : 'Biosamples API does not export '+line.donor_biosample.id"></td>
+    </tr>
+</div>

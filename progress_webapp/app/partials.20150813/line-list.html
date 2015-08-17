@@ -1,0 +1,52 @@
+<div class="panel panel-default">
+<div class="row">
+<div class="col-md-12">
+    <div class="row">
+    <div class="col-md-6"> <h3 >Cell line list</h3> </div>
+    <div class="col-md-6">
+      <p><a href="#/errors">View categories of errors</a></p>
+      <p><a href="#/tests">View summary of tests</a></p>
+    </div>
+    </div>
+
+    <div class="wrapper">
+      <p>Number of cell lines: <span ng-bind='LineCtrl.data.count'></span></p>
+      <p>Date of data exports: <span ng-bind='LineCtrl.data.date'></span></p>
+    </div>
+
+    <table class="table table-responsive">
+    <thead><tr>
+    <th></th>
+    <th ng-click="LineCtrl.sortBy('name')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Name</div></th>
+    <th ng-click="LineCtrl.sortBy('alternateNames')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Alternative names</div></th>
+    <th ng-click="LineCtrl.sortBy('IMSExported')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Exported by IMS API</div></th>
+    <th ng-click="LineCtrl.sortBy('hESCregExported')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Exported by hPSCreg API</div></th>
+    <th ng-click="LineCtrl.sortBy('hESCregValidated')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Validated by hPSCreg</div></th>
+    <th ng-click="LineCtrl.sortBy('biosampleExported')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Exported by BioSample API</div></th>
+    <th ng-click="LineCtrl.sortBy('IMSName')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">IMS name</div></th>
+    <th ng-click="LineCtrl.sortBy('IMSBiosample')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">IMS BioSample ID</div></th>
+    <th ng-click="LineCtrl.sortBy('hESCregName')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">hPSCreg name</div></th>
+    <th ng-click="LineCtrl.sortBy('hESCregBiosample')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">hPSCreg BioSample ID</div></th>
+    <th ng-click="LineCtrl.sortBy('biosampleVials')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Vials in BioSample</div></th>
+    <th ng-click="LineCtrl.sortBy('donorBiosampleError')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Donor biosample errors</div></th>
+    </tr></thead>
+    <tbody> <tr ng-repeat="line in LineCtrl.data.lines">
+      <td><span ng-bind="$index+1"></span></td>
+      <td ng-class="{danger: line.consensus.name.error}"><a ng-if="line.consensus.name.val || line.consensus.biosample_id.val" ng-href="#/{{line.consensus.name.val || line.consensus.biosample_id.val}}"><span ng-bind="line.consensus.name.val || '{ unknown }'"></a></span></td>
+      <td><span ng-bind="line.consensus.alternate_names"></span></td>
+      <td ng-class="{danger: !line.IMS.exported}"><span ng-bind="line.IMS.exported ? 'yes' : 'no'"></span></td>
+      <td ng-class="{danger: !line.hESCreg.exported}"><span ng-bind="line.hESCreg.exported ? 'yes' : 'no'"></span></td>
+      <td ng-class="{danger: !line.hESCreg.validated}"><span ng-bind="line.hESCreg.validated ? 'yes' : 'no'"></span></td>
+      <td ng-class="{danger: !line.biosample.exported}"><span ng-bind="line.biosample.exported ? 'yes' : 'no'"></span></td>
+      <td ng-class="{danger: line.IMS.name.error}"><span ng-bind="line.IMS.name.val"></span></td>
+      <td ng-class="{danger: line.IMS.biosample_id.error}"><span ng-bind="line.IMS.biosample_id.val"></span></td>
+      <td ng-class="{danger: line.hESCreg.name.error}"><span ng-bind="line.hESCreg.name.val"></span></td>
+      <td ng-class="{danger: line.hESCreg.biosample_id.error}"><span ng-bind="line.hESCreg.biosample_id.val"></span></td>
+      <td><span ng-bind="line.biosample.vial_count"></span></td>
+      <td ng-class="{danger: line.consensus.donor_biosample_id.error}">
+        <span ng-bind="line.consensus.donor_biosample_id.error ? 'yes' : 'no'"></span></td>
+    </tr></tbody>
+    </table>
+</div>
+</div>
+</div>

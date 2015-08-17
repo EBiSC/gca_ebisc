@@ -1,0 +1,114 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use JSON;
+use POSIX qw(strftime);
+use Data::Compare;
+use File::Basename qw();
+use File::Path qw();
+my $date = strftime('%Y%m%d', localtime);
+
+my $drop_base = '/nfs/production/reseq-info/drop/ebisc-data';
+my $export_base = $drop_base.'/export';
+my $current_export_base = $export_base.'/current';
+my $today_export_base = "$export_base/$date";
+my $current_json_file = "$drop_base/json/batches.current.json";
+my $api_base = 'http://www.ebi.ac.uk/~ebiscdcc/api';
+my $cache_base = $drop_base.'/cache';
+
+open my $IN, '<', $current_json_file or die "could not open $current_json_file $!";
+my @lines = <$IN>;
+my $today_cell_lines = decode_json(join('', @lines));
+close $IN;
+
+my @export_files;
+
+my %batch_list = (
+  links => {self => "$api_base/batch.json"},
+  meta => {type => 'batch_list'},
+  data => [],
+);
+
+while (my ($cell_line, $batches) = each %$today_cell_lines) {
+  while (my ($batch_id, $batch_data) = each %$batches) {
+    my $current_exported_json = "$current_export_base/batch/$cell_line/$batch_id.json";
+    my $current_exported_batch = {data => {}, meta => {}};
+    if (-f $current_exported_json) {
+      open $IN, '<', $current_exported_json or die "could not open $current_exported_json";
+      @lines = <$IN>;
+      close $IN;
+      $current_exported_batch = decode_json(join('', @lines));
+    }
+
+    if (my $coa = $batch_data->{certificate_of_analysis}) {
+      my $file = $coa->{file};
+      push(@export_files, $file);
+      $batch_data->{certificate_of_analysis}{file} = "$api_base/file$file";
+      if (my $current_coa = $current_exported_batch->{data}{certificate_of_analysis}) {
+        if (File::Basename::fileparse($current_coa->{file}) eq File::Basename::fileparse($coa->{file}) && $current_coa->{md5} eq $coa->{md5}) {
+          $coa->{updated} = $current_coa->{updated};
+        }
+      }
+      $coa->{updated} ||= $date;
+    }
+    if ($batch_data->{images}) {
+      foreach my $image (@{$batch_data->{images}}) {
+        push(@export_files, $image->{file});
+        $image->{file} = $api_base.'/file'.$image->{file};
+        if ($current_exported_batch->{data}{images}) {
+          my ($current_image) = grep {File::Basename::fileparse($_->{file}) eq File::Basename::fileparse($image->{file}) && $_->{md5} eq $image->{md5}} @{$current_exported_batch->{data}{images}};
+          if ($current_image) {
+            $image->{updated} = $current_image->{updated};
+          }
+        }
+        $image->{updated} ||= $date;
+      }
+    }
+
+    my $updated = Compare($current_exported_batch->{data}, $batch_data) ? $current_exported_batch->{meta}->{updated} : $date;
+    my %export_json = (
+      links => {
+        self => "$api_base/batch/$cell_line/$batch_id.json",
+      },
+      data => $batch_data,
+      meta => {
+        type => 'batch',
+        updated => $updated,
+      }
+    );
+    push(@{$batch_list{data}}, {
+      cell_line => $cell_line,
+      batch_id => $batch_id,
+      updated => $updated,
+      href => "$api_base/batch/$cell_line/$batch_id.json",
+    });
+
+    my $output_file = "$today_export_base/batch/$cell_line/$batch_id.json";
+    File::Path::make_path("$today_export_base/batch/$cell_line/");
+    open my $OUT, '>', $output_file or die "could not open $output_file $!";
+    print $OUT encode_json(\%export_json);
+    close $OUT;
+  }
+}
+
+my $output_file = "$today_export_base/batch.json";
+File::Path::make_path($today_export_base);
+open my $OUT, '>', $output_file or die "could not open $output_file $!";
+print $OUT encode_json(\%batch_list);
+close $OUT;
+
+
+FILE:
+foreach my $file (@export_files) {
+  my $from = "$cache_base/$file";
+  my $to = "$today_export_base/file/$file";
+  File::Path::make_path(File::Basename::dirname($to));
+  next FILE if -e $to;
+  symlink($from, $to) or die $!;
+}
+
+if (-e $current_export_base) {
+  unlink $current_export_base;
+}
+symlink($today_export_base, $current_export_base) or die $!;

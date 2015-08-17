@@ -1,0 +1,13 @@
+div.wrapper {
+  margin: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+div.sort-arrows {
+  width: 20px;
+  float: left;
+}
+div.after-sort-arrows {
+  margin-left: 25px;
+}
