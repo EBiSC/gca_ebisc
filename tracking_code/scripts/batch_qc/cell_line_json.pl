@@ -15,30 +15,22 @@ my $json_output = "$drop_base/json/batches.$date.json";
 my $current_json_output = "$drop_base/json/batches.current.json";
 
 my %column_map = (
-  0 => 'cell_line',
-  1 => 'batch_id',
-  2 => 'biosamples_batch_id',
-  3 => 'ecacc_cat_no',
-  4 => 'vials_at_roslin',
-  5 => 'vials_shipped_to_fraunhoffer',
-  6 => 'vials_shipped_to_ECACC',
-  7 => 'passage_number',
-  8 => 'cells_per_vial',
-  9 => 'culture_conditions',
-  10 => 'additional_comments',
-);
-
-my %culture_conditions_map = (
-  1 => {
-    matrix => 'vitronectin',
-    medium => 'E8',
-    passage_method => 'EDTA',
-  },
-  2 => {
-    matrix => 'Matrigel / Geltrex',
-    medium => 'mTeSR',
-    passage_method => 'EDTA',
-  },
+  0 => ['cell_line'],
+  1 => ['batch_id'],
+  2 => ['biosamples_batch_id'],
+  3 => ['ecacc_cat_no'],
+  4 => ['vials_at_roslin'],
+  5 => ['vials_shipped_to_fraunhoffer'],
+  6 => ['vials_shipped_to_ECACC'],
+  7 => ['passage_number'],
+  8 => ['cells_per_vial'],
+  9 => ['culture_conditions/matrix', {1 => 'vitronectin', 2 => 'Matrigel / Geltrex'}],
+  10 =>['culture_conditions/medium', {1 => 'E8', 2 => 'mTeSTR'}],
+  11 =>['culture_conditions/passage_method', {1 => 'EDTA'}],
+  12 =>['culture_conditions/CO2_concentration', {}],
+  13 =>['culture_conditions/O2_concentration', {}],
+  14 =>['culture_conditions/temperature', {}],
+  15 =>['additional_comments', {1 => 'Typical recovery after thaw, typical growth cycle', free_text => 1}],
 );
 
 
@@ -59,11 +51,11 @@ my %cell_lines;
 my %batch_qc_files;
 FILE:
 foreach my $file ( keys %cache_files) {
-  $file =~ m{/incoming/wp5/ebisc.batch_qc.(\d+).txt};
-  next FILE if !$1;
+  my $matches = $file =~ m{/incoming/wp5/batchqc/ebisc.batch_qc.(\d+).txt};
+  next FILE if !$matches;
   $batch_qc_files{$1} = $file;
 }
-my ($batch_qc_file) = map {$batch_qc_files{$_}} sort {$a <=> $b} keys %batch_qc_files;
+my ($batch_qc_file) = map {$batch_qc_files{$_}} sort {$b <=> $a} keys %batch_qc_files;
 die "did not find batch qc file" if !$batch_qc_file;
 my $batch_qc_cache_file = $cache_files{$batch_qc_file};
 $batch_qc_cache_file = "$cache_base/$batch_qc_cache_file";
@@ -74,47 +66,33 @@ while (my $line = <$fh>) {
   chomp $line;
   my @split_line = split("\t", $line);
   my $name = $split_line[0];
+  next LINE if !$name;
   my $batch_id = $split_line[1];
+  next LINE if !$batch_id;
   my %batch;
   while (my ($column, $json_key) = each %column_map) {
-    my @split_keys = split('/', $json_key);
     my $val = $split_line[$column];
-    $val =~ s{[^[:ascii:]]}{}g;
-    $val =~ s{^[\s"]+}{}g;
-    $val =~ s{[\s"]+$}{}g;
-    if (@split_keys == 1) {
-      $batch{$split_keys[0]} = $val;
+    $val =~ s/^"(.*)"$/$1/;
+    if (ref($json_key->[1]) eq 'HASH') {
+      if (my $converted_val = $json_key->[1]->{$val}) {
+        $val = $converted_val;
+      }
+      else {
+        $val = $json_key->[1]->{free_text} ? $val : '';
+      }
     }
-    elsif (@split_keys == 2) {
-      $batch{$split_keys[0]}{$split_keys[1]} = $val;
+    my @split_path = split('/', $json_key->[0]);
+    if (@split_path == 1) {
+      $batch{$split_path[0]} = $val;
     }
-    elsif (@split_keys == 3) {
-      $batch{$split_keys[0]}{$split_keys[1]}{$split_keys[2]} = $val;
-    }
-    else {
-      die "not implemented yet: $json_key";
+    elsif (@split_path ==2) {
+      $batch{$split_path[0]}{$split_path[1]} = $val;
     }
   }
 
   $cell_lines{$name}{$batch_id} = \%batch;
 }
 close $fh;
-
-foreach my $line_data (values %cell_lines) {
-  foreach my $batch_data (values %$line_data) {
-    if ($batch_data->{culture_conditions}) {
-      if (my $cc_hash = $culture_conditions_map{$batch_data->{culture_conditions}}) {
-        $batch_data->{culture_conditions} = $cc_hash;
-      }
-      else {
-        die "did not recognise culture conditions code :".$batch_data->{culture_conditions};
-      }
-    }
-    else {
-        $batch_data->{culture_conditions} = {};
-    }
-  }
-}
 
 
 my %images_files;
@@ -165,18 +143,24 @@ while (my $line = <$fh>) {
 close $fh;
 
 
+my %coas;
 FILE:
 foreach my $file ( keys %cache_files) {
   next FILE if $file !~ m{/incoming/wp5/certificate_of_analysis/};
   my $filename = File::Basename::fileparse($file);
-  my ($name, $batch_id, $other) = split(/\./, $filename, 3);
-  next IMAGE if !$cell_lines{$name};
-  my $batch = $cell_lines{$name}{$batch_id};
-  next IMAGE if !$batch;
-  $batch->{certificate_of_analysis} = {
+  my ($ecacc_id) = $filename =~ /cat no (\d+)/i;
+  $coas{$ecacc_id} = {
     file => $cache_files{$file},
     md5 => $cache_md5s{$cache_files{$file}},
   };
+}
+foreach my $cell_line_hash (values %cell_lines) {
+  BATCH:
+  foreach my $batch_hash (values %$cell_line_hash) {
+    next BATCH if !$batch_hash->{ecacc_cat_no};
+    next BATCH if !$coas{$batch_hash->{ecacc_cat_no}};
+    $batch_hash->{certificate_of_analysis} = $coas{$batch_hash->{ecacc_cat_no}};
+  }
 }
 
 open my $OUT, '>', $json_output or die "could not open $json_output $!";
