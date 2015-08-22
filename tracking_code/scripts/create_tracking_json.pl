@@ -37,7 +37,7 @@ LINE:
 foreach my $line_name (@{$hESCreg->find_lines()}) {
   my $line = eval{$hESCreg->get_line($line_name);};
   next LINE if !$line || $@;
-  my $biosample_id = $line->{biosamples_id};
+  my $biosample_id = $line->{biosamples_id} && $line->{biosamples_id} =~ /^SAM.*/ ? $& : undef;
   if (!$biosample_id) {
     NAME:
     foreach my $possible_name ($line_name, @{$line->{alternate_name}}) {
@@ -65,7 +65,7 @@ my $IMS = ReseqTrack::EBiSC::IMS->new(
 );
 
 foreach my $line (@{$IMS->find_lines->{objects}}) {
-  my $biosample_id = $line->{biosamples_id};
+  my $biosample_id = $line->{biosamples_id} && $line->{biosamples_id} =~ /^SAM.*/ ? $& : undef;
   if (!$biosample_id) {
     NAME:
     foreach my $possible_name ($line->{name}, @{$line->{alternate_names}}) {
@@ -89,7 +89,6 @@ foreach my $line (@{$IMS->find_lines->{objects}}) {
       delete $discovered_no_biosample{$line->{name}};
   }
 }
-
 
 
 
