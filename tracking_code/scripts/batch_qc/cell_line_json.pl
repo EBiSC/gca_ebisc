@@ -22,15 +22,15 @@ my %column_map = (
   4 => ['vials_at_roslin'],
   5 => ['vials_shipped_to_fraunhoffer'],
   6 => ['vials_shipped_to_ECACC'],
-  7 => ['passage_number'],
-  8 => ['cells_per_vial'],
-  9 => ['culture_conditions/matrix', {1 => 'vitronectin', 2 => 'Matrigel / Geltrex'}],
-  10 =>['culture_conditions/medium', {1 => 'E8', 2 => 'mTeSTR'}],
-  11 =>['culture_conditions/passage_method', {1 => 'EDTA'}],
-  12 =>['culture_conditions/CO2_concentration', {}],
-  13 =>['culture_conditions/O2_concentration', {}],
-  14 =>['culture_conditions/temperature', {}],
-  15 =>['additional_comments', {1 => 'Typical recovery after thaw, typical growth cycle', free_text => 1}],
+  #7 => ['passage_number'],
+  #8 => ['cells_per_vial'],
+  9 => ['culture_conditions/matrix', {1 => 'Vitronectin', 2 => 'Matrigel / Geltrex', 3 => 'Laminin'}],
+  10 =>['culture_conditions/medium', {1 => 'Essential E8', 2 => 'mTeSTR'}],
+  11 =>['culture_conditions/passage_method', {1 => 'EDTA', 2 => 'Manual Passaging'}],
+  12 =>['culture_conditions/CO2_concentration', {1 =>'5%', free_text => 1}],
+  13 =>['culture_conditions/O2_concentration', {1 => '21%', free_text => 1}],
+  14 =>['culture_conditions/temperature', {1 => '37C', free_text => 1}],
+  #15 =>['additional_comments', {1 => 'Typical recovery after thaw, typical growth cycle', free_text => 1}],
 );
 
 
@@ -98,11 +98,11 @@ close $fh;
 my %images_files;
 FILE:
 foreach my $file ( keys %cache_files) {
-  my ($date) = $file =~ m{/incoming/wp5/cell_images/ebisc.images[\.a-zA-Z_]*\.(\d+).txt};
+  my ($date) = $file =~ m{/incoming/wp5/cell_images/ebisc.images[\.a-zA-Z_]*[\._](\d{8}).txt};
   next FILE if !$date;
   $images_files{$date} = $file;
 }
-my ($images_file) = map {$images_files{$_}} sort {$a <=> $b} keys %images_files;
+my ($images_file) = map {$images_files{$_}} sort {$b <=> $a} keys %images_files;
 die "did not find images file" if !$images_file;
 my $images_cache_file = $cache_files{$images_file};
 my @used_images;
