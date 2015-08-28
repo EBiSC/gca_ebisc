@@ -48,6 +48,7 @@ foreach my $cell_line (@{$new_api_compares->{'lines'}}) {
   add_date($cell_line->{'biosample'}{'exported'}, $old_cell_line->{'biosample'}{'exported'});
   add_date($cell_line->{'hESCreg'}{'exported'}, $old_cell_line->{'hESCreg'}{'exported'});
   add_date($cell_line->{'hESCreg'}{'validated'}, $old_cell_line->{'hESCreg'}{'validated'});
+  add_date($cell_line->{'donor_biosample'}, $old_cell_line->{'donor_biosample'};
 };
 
 print JSON::encode_json($new_api_compares);
