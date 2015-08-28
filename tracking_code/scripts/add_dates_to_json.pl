@@ -44,6 +44,10 @@ foreach my $cell_line (@{$new_api_compares->{'lines'}}) {
   add_date($cell_line->{'hESCreg'}{'biosample_id'}, $old_cell_line->{'hESCreg'}{'biosample_id'});
   add_date($cell_line->{'hESCreg'}{'donor_biosample_id'}, $old_cell_line->{'hESCreg'}{'donor_biosample_id'});
   add_date($cell_line->{'hESCreg'}{'name'}, $old_cell_line->{'hESCreg'}{'name'});
+  add_date($cell_line->{'IMS'}{'exported'}, $old_cell_line->{'IMS'}{'exported'});
+  add_date($cell_line->{'biosample'}{'exported'}, $old_cell_line->{'biosample'}{'exported'});
+  add_date($cell_line->{'hESCreg'}{'exported'}, $old_cell_line->{'hESCreg'}{'exported'});
+  add_date($cell_line->{'hESCreg'}{'validated'}, $old_cell_line->{'hESCreg'}{'validated'});
 };
 
 print JSON::encode_json($new_api_compares);
@@ -52,6 +56,5 @@ sub add_date {
   my ($new_data, $old_data) = @_;
   return if !$new_data;
   return if !$new_data->{'error'};
-  $old_data //= {};
-  $new_data->{'error_date'} = $old_data->{'error_date'} || $date;
+  $new_data->{'error_date'} = !ref($old_data) ? $date : $old_data->{'error_date'} || $date;
 }

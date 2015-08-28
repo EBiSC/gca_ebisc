@@ -15,10 +15,10 @@ controllers.controller('LineListCtrl', ['List', function(List) {
     this.sortDesc = false;
     this.sortBy = function(column) {
       this.data.lines.sort(
-        column === 'IMSExported' ? function(a,b) {return a.IMS.exported - b.IMS.exported || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
-          : column === 'hESCregExported' ? function(a,b) {return a.hESCreg.exported - b.hESCreg.exported || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
-          : column === 'hESCregValidated' ? function(a,b) {return a.hESCreg.exported - b.hESCreg.exported || a.hESCreg.validated - b.hESCreg.validated || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
-          : column === 'biosampleExported' ? function(a,b) {return a.biosample.exported - b.biosample.exported || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
+        column === 'IMSExported' ? function(a,b) {return b.IMS.exported.error - a.IMS.exported.error || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
+          : column === 'hESCregExported' ? function(a,b) {return b.hESCreg.exported.error - a.hESCreg.exported.error || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
+          : column === 'hESCregValidated' ? function(a,b) {return b.hESCreg.exported.error - a.hESCreg.exported.error || b.hESCreg.validated.error - a.hESCreg.validated.error || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
+          : column === 'biosampleExported' ? function(a,b) {return b.biosample.exported.error - a.biosample.exported.error || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
           : column === 'alternateNames' ? function(a,b) {return a.consensus.alternate_names.localeCompare(b.consensus.alternate_names) || a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
           : column === 'IMSName' ? function(a,b) {return a.IMS.name.error - b.IMS.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
           : column === 'IMSBiosample' ? function(a,b) {return a.IMS.biosample_id.error - b.IMS.biosample_id.error || a.consensus.biosample_id.val.localeCompare(b.consensus.biosample_id.val)}
