@@ -25,7 +25,7 @@ controllers.controller('LineListCtrl', ['List', function(List) {
           : column === 'hESCregName' ? function(a,b) {return a.hESCreg.name.error - b.hESCreg.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
           : column === 'hESCregBiosample' ? function(a,b) {return a.hESCreg.biosample_id.error - b.hESCreg.biosample_id.error || a.consensus.biosample_id.val.localeCompare(b.consensus.biosample_id.val)}
           : column === 'biosampleVials' ? function(a,b) {return (a.biosample.vial_count || 0) - (b.biosample.vial_count || 0) || a.consensus.name.val.localeCompare(b.consensus.name.val)}
-          : column === 'donorBiosampleError' ? function(a,b) {return a.consensus.donor_biosample_id.error - b.consensus.donor_biosample_id.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
+          : column === 'donorBiosampleError' ? function(a,b) {return a.consensus.donor_biosample.error - b.consensus.donor_biosample.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
           : function(a,b) {return a.consensus.name.error - b.consensus.name.error || a.consensus.name.val.localeCompare(b.consensus.name.val)}
       );
       if (column === this.sortColumn) {

@@ -43,8 +43,8 @@
       <td ng-class="{danger: line.hESCreg.name.error}"><span ng-bind="line.hESCreg.name.val"></span></td>
       <td ng-class="{danger: line.hESCreg.biosample_id.error}"><span ng-bind="line.hESCreg.biosample_id.val"></span></td>
       <td><span ng-bind="line.biosample.vial_count"></span></td>
-      <td ng-class="{danger: line.consensus.donor_biosample_id.error}">
-        <span ng-bind="line.consensus.donor_biosample_id.error ? 'yes' : 'no'"></span></td>
+      <td ng-class="{danger: line.consensus.donor_biosample.error}">
+        <span ng-bind="line.consensus.donor_biosample.error ? 'yes' : 'no'"></span></td>
     </tr></tbody>
     </table>
 </div>
