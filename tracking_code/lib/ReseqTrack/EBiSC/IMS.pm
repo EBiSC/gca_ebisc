@@ -22,7 +22,19 @@ sub BUILD {
 
 sub find_lines {
   my ($self) = @_;
-  my $response = $self->ua->get(sprintf('https://%s/api/v0/cell-lines/?format=json', $self->base_url));
+  my @lines;
+  my $url_path = 'api/v0/cell-lines/?format=json';
+  while ($url_path) {
+    my $json = $self->query_api($url_path);
+    push(@lines, @{$json->{objects}});
+    $url_path = $json->{meta}{next};
+  }
+  return {objects=>\@lines};
+}
+
+sub query_api {
+  my ($self, $url_path) = @_;
+  my $response = $self->ua->get(sprintf('https://%s/%s', $self->base_url, $url_path));
   die $response->status_line if $response->is_error;
   return decode_json($response->content);
 }
