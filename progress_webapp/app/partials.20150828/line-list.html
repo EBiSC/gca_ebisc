@@ -32,18 +32,18 @@
     </tr></thead>
     <tbody> <tr ng-repeat="line in LineCtrl.data.lines">
       <td><span ng-bind="$index+1"></span></td>
-      <td ng-class="{danger: line.consensus.name.error}"><a ng-if="line.consensus.name.val || line.consensus.biosample_id.val" ng-href="#/{{line.consensus.name.val || line.consensus.biosample_id.val}}"><span ng-bind="line.consensus.name.val || '{ unknown }'"></a></span></td>
+      <td ng-class="{danger: line.consensus.name.error, success: !line.consensus.name.error}"><a ng-if="line.consensus.name.val || line.consensus.biosample_id.val" ng-href="#/{{line.consensus.name.val || line.consensus.biosample_id.val}}"><span ng-bind="line.consensus.name.val || '{ unknown }'"></a></span></td>
       <td><span ng-bind="line.consensus.alternate_names"></span></td>
-      <td ng-class="{danger: line.IMS.exported.error}"><span ng-bind="line.IMS.exported.error ? 'no' : 'yes'"></span></td>
-      <td ng-class="{danger: line.hESCreg.exported.error}"><span ng-bind="line.hESCreg.exported.error ? 'no' : 'yes'"></span></td>
-      <td ng-class="{danger: line.hESCreg.validated.error}"><span ng-bind="line.hESCreg.validated.error ? 'no' : 'yes'"></span></td>
-      <td ng-class="{danger: line.biosample.exported.error}"><span ng-bind="line.biosample.exported.error ? 'no' : 'yes'"></span></td>
-      <td ng-class="{danger: line.IMS.name.error}"><span ng-bind="line.IMS.name.val"></span></td>
-      <td ng-class="{danger: line.IMS.biosample_id.error}"><span ng-bind="line.IMS.biosample_id.val"></span></td>
-      <td ng-class="{danger: line.hESCreg.name.error}"><span ng-bind="line.hESCreg.name.val"></span></td>
-      <td ng-class="{danger: line.hESCreg.biosample_id.error}"><span ng-bind="line.hESCreg.biosample_id.val"></span></td>
+      <td ng-class="{danger: line.IMS.exported.error, success: !line.IMS.exported.error}"><span ng-bind="line.IMS.exported.error ? 'no' : 'yes'"></span></td>
+      <td ng-class="{danger: line.hESCreg.exported.error, success: !line.hESCreg.exported.error}"><span ng-bind="line.hESCreg.exported.error ? 'no' : 'yes'"></span></td>
+      <td ng-class="{danger: line.hESCreg.validated.error, success: !line.hESCreg.validated.error}"><span ng-bind="line.hESCreg.validated.error ? 'no' : 'yes'"></span></td>
+      <td ng-class="{danger: line.biosample.exported.error, success: !line.biosample.exported.error}"><span ng-bind="line.biosample.exported.error ? 'no' : 'yes'"></span></td>
+      <td ng-class="{danger: line.IMS.name.error, success: !line.IMS.name.error}"><span ng-bind="line.IMS.name.val"></span></td>
+      <td ng-class="{danger: line.IMS.biosample_id.error, success: !line.IMS.biosample_id.error}"><span ng-bind="line.IMS.biosample_id.val"></span></td>
+      <td ng-class="{danger: line.hESCreg.name.error, success: !line.hESCreg.name.error}"><span ng-bind="line.hESCreg.name.val"></span></td>
+      <td ng-class="{danger: line.hESCreg.biosample_id.error, success: !line.hESCreg.biosample_id.error}"><span ng-bind="line.hESCreg.biosample_id.val"></span></td>
       <td><span ng-bind="line.biosample.vial_count"></span></td>
-      <td ng-class="{danger: line.consensus.donor_biosample.error}">
+      <td ng-class="{danger: line.consensus.donor_biosample.error, success: !line.consensus.donor_biosample.error}">
         <span ng-bind="line.consensus.donor_biosample.error ? 'yes' : 'no'"></span></td>
     </tr></tbody>
     </table>
