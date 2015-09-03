@@ -27,9 +27,9 @@
     <tbody> <tr ng-repeat="test in TestCtrl.tests">
       <td><span ng-bind="$index+1"></span></td>
       <td><span ng-bind="test.description"></span></td>
-      <td><span ng-bind="test.pass || 0"></span></td>
+      <td ng-class="{success: test.pass}"><span ng-bind="test.pass || 0"></span></td>
       <td ng-class="{danger: test.fail}"><span ng-bind="test.fail || 0"></span></td>
-      <td><span ng-bind="test['cannot test'] || 0"></span></td>
+      <td ng-class="{warning: test.['cannot test']}"><span ng-bind="test['cannot test'] || 0"></span></td>
     </tr></tbody>
     </table>
     </div>
