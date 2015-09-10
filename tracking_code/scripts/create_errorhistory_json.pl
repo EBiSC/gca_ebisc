@@ -5,10 +5,6 @@ use warnings;
 use Getopt::Long;
 use File::Find qw(find);
 use JSON qw();
-use Data::Dumper; #DELETE WHEN TESTING DONE
-
-#  JSON batches located at: (DELETE ME)
-#/nfs/production/reseq-info/work/ebiscdcc/tracking_json/
 
 my $tracking_json;
 
@@ -32,6 +28,7 @@ foreach my $file (@files) {
 
 #  Extract test results for each day
 my %all_tests;
+my %tests_totalled;
 foreach my $filedate (keys(%oneperday_files)) {
 	open my $IN, '<', $oneperday_files{$filedate}[1] or die "could not open $oneperday_files{$filedate}[1] $!";
 	my @lines = <$IN>;
@@ -57,7 +54,8 @@ foreach my $filedate (keys(%oneperday_files)) {
 			 }
 		}
 		$all_tests{$description}{$filedate} = {'pass' => $pass, 'fail' => $fail, 'cannot test' => $cannot_test};
+		$tests_totalled{$filedate} = $tests->{'tests_totalled'};
 	}
 }
 
-print JSON::encode_json({testhistory => \%all_tests});
+print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \%tests_totalled});
