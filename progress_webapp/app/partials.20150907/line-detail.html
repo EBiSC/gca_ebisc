@@ -103,7 +103,19 @@
     <tr ng-if="line.donor_biosample">
       <td>Donor exported by Biosamples</td>
       <td ng-class="{danger: line.donor_biosample.exported.error, success: !line.donor_biosample.exported.error}"><span ng-bind="line.donor_biosample.exported.error ? 'no' : 'yes'"><span></td>
-      <td ng-bind="line.donor_biosample.exported.error ? 'Biosamples API does not export '+line.donor_biosample.id : ''"></td>
+      <td ng-bind="!line.donor_biosample.id ? 'donor Biosample ID is unknown' : line.donor_biosample.exported.error ? 'Biosamples API does not export '+ line.donor_biosample.id : ''"></td>
       <td ng-bind="line.donor_biosample.exported.error_date"></td>
+    </tr>
+    <tr ng-if="!line.biosample.exported.error">
+      <td>Number of batches in BioSamples missing an explicit link to the cell line</td>
+      <td ng-class="{danger: line.biosample.batch_line_link.error, success: !line.biosample.batch_line_link.error}"><span ng-bind="line.biosample.batch_line_link.error"><span></td>
+      <td></td>
+      <td ng-bind="line.biosample.batch_line_link.error_date"></td>
+    </tr>
+    <tr ng-if="!line.biosample.exported.error">
+      <td>Number of batches in BioSamples missing an explicit link to the donor</td>
+      <td ng-class="{danger: line.biosample.batch_donor_link.error, success: !line.biosample.batch_donor_link.error}"><span ng-bind="line.biosample.batch_donor_link.error"><span></td>
+      <td></td>
+      <td ng-bind="line.biosample.batch_donor_link.error_date"></td>
     </tr>
 </div>

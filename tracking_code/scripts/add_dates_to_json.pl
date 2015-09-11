@@ -46,6 +46,8 @@ foreach my $cell_line (@{$new_api_compares->{'lines'}}) {
   add_date($cell_line->{'hESCreg'}{'name'}, $old_cell_line->{'hESCreg'}{'name'});
   add_date($cell_line->{'IMS'}{'exported'}, $old_cell_line->{'IMS'}{'exported'});
   add_date($cell_line->{'biosample'}{'exported'}, $old_cell_line->{'biosample'}{'exported'});
+  add_date($cell_line->{'biosample'}{'batch_line_link'}, $old_cell_line->{'biosample'}{'batch_line_link'});
+  add_date($cell_line->{'biosample'}{'batch_donor_link'}, $old_cell_line->{'biosample'}{'batch_donor_link'});
   add_date($cell_line->{'hESCreg'}{'exported'}, $old_cell_line->{'hESCreg'}{'exported'});
   add_date($cell_line->{'hESCreg'}{'validated'}, $old_cell_line->{'hESCreg'}{'validated'});
   add_date($cell_line->{'donor_biosample'}{'exported'}, $old_cell_line->{'donor_biosample'}{'exported'});

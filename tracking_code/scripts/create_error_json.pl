@@ -37,7 +37,7 @@ foreach my $cell_line (@{$api_compares->{lines}}) {
     push(@errors, 'Cell line is not exported by BioSamples');
   }
   else {
-    push(@errors, grep {$_} map {$_->{error_string}} @{$cell_line->{biosample}}{qw(id)});
+    push(@errors, grep {$_} map {$_->{error_string}} @{$cell_line->{biosample}}{qw(id batch_donor_link batch_line_link)});
   }
 
   if ($cell_line->{donor_biosample}) {

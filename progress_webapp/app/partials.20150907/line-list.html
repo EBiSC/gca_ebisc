@@ -23,11 +23,9 @@
     <th ng-click="LineCtrl.sortBy('hESCregExported')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Exported by hPSCreg API</div></th>
     <th ng-click="LineCtrl.sortBy('hESCregValidated')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Validated by hPSCreg</div></th>
     <th ng-click="LineCtrl.sortBy('biosampleExported')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Exported by BioSample API</div></th>
-    <th ng-click="LineCtrl.sortBy('IMSName')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">IMS name</div></th>
-    <th ng-click="LineCtrl.sortBy('IMSBiosample')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">IMS BioSample ID</div></th>
-    <th ng-click="LineCtrl.sortBy('hESCregName')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">hPSCreg name</div></th>
-    <th ng-click="LineCtrl.sortBy('hESCregBiosample')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">hPSCreg BioSample ID</div></th>
-    <th ng-click="LineCtrl.sortBy('donorBiosampleError')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Donor biosample errors</div></th>
+    <th ng-click="LineCtrl.sortBy('IMSOther')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Other IMS errors</div></th>
+    <th ng-click="LineCtrl.sortBy('hESCregOther')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Other hPSCreg errors</div></th>
+    <th ng-click="LineCtrl.sortBy('biosampleOther')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Other Biosample errors</div></th>
     </tr></thead>
     <tbody> <tr ng-repeat="line in LineCtrl.data.lines">
       <td><span ng-bind="$index+1"></span></td>
@@ -37,11 +35,9 @@
       <td ng-class="{danger: line.hESCreg.exported.error, success: !line.hESCreg.exported.error}"><span ng-bind="line.hESCreg.exported.error ? 'no' : 'yes'"></span></td>
       <td ng-class="{danger: line.hESCreg.validated.error && !line.hESCreg.exported.error, success: !line.hESCreg.validated.error}"><span ng-bind="line.hESCreg.validated.error ? (!line.hESCreg.exported.error ? 'no' : '{cannot test yet}') : 'yes'"></span></td>
       <td ng-class="{danger: line.biosample.exported.error && !hESCreg.exported.error, success: !line.biosample.exported.error && !hESCreg.exported.error}"><span ng-bind="line.biosample.exported.error ? 'no' : 'yes'"></span></td>
-      <td ng-class="{danger: !line.IMS.exported.error && line.IMS.name.error, success: !line.IMS.exported.error && !line.IMS.name.error}"><span ng-bind="line.IMS.name.val ? line.IMS.name.val : (!line.IMS.exported.error && line.IMS.name.error ? '{missing}' : '{cannot test yet}')"></span></td>
-      <td ng-class="{danger: !line.IMS.exported.error && line.IMS.biosample_id.error, success: !line.IMS.exported.error && !line.IMS.biosample_id.error}"><span ng-bind="line.IMS.biosample_id.val ? line.IMS.biosample_id.val : (!line.IMS.exported.error && line.IMS.biosample_id.error ? '{missing}' : '{cannot test yet}')"></span></td>
-      <td ng-class="{danger: !line.hESCreg.exported.error && line.hESCreg.name.error, success: !line.hESCreg.exported.error && !line.hESCreg.name.error}"><span ng-bind="line.hESCreg.name.val ? line.hESCreg.name.val : (!line.hESCreg.exported.error && line.hESCreg.name.error ? '{missing}' : '{cannot test yet}')"></span></td>
-      <td ng-class="{danger: !line.hESCreg.exported.error && line.hESCreg.biosample_id.error, success: !line.hESCreg.exported.error && !line.hESCreg.biosample_id.error}"><span ng-bind="line.hESCreg.biosample_id.val ? line.hESCreg.biosample_id.val : (!line.hESCreg.exported.error && line.hESCreg.biosample_id.error ? '{missing}' : '{cannot test yet}')"></span></td>
-      <td ng-class="{danger: line.consensus.donor_biosample.error, success: !line.consensus.donor_biosample.error}"><span ng-bind="line.consensus.donor_biosample.error ? 'yes' : 'no'"></span></td>
+      <td ng-class="{danger: !line.IMS.exported.error && (line.IMS.biosample_id.error || line.IMS.donor_biosample_id.error || line.IMS.name.error)}"><span ng-bind="line.IMS.exported.error ? '{cannot test yet}' : (line.IMS.biosample_id.error || line.IMS.donor_biosample_id.error || line.IMS.name.error) ? 'yes' : 'no' "></span></td>
+      <td ng-class="{danger: !line.hESCreg.exported.error && (line.hESCreg.biosample_id.error || line.hESCreg.donor_biosample_id.error || line.hESCreg.name.error)}"><span ng-bind="line.hESCreg.exported.error ? '{cannot test yet}' : (line.hESCreg.biosample_id.error || line.hESCreg.donor_biosample_id.error || line.hESCreg.name.error) ? 'yes' : 'no' "></span></td>
+      <td ng-class="{danger: !line.biosample.exported.error && (line.biosample.batch_donor_link.error || line.biosample.batch_line_link.error || line.biosample.id.error || line.donor_biosample.exported.error)}"><span ng-bind="line.biosample.exported.error ? '{cannot test yet}' : (line.biosample.batch_donor_link.error || line.biosample.batch_line_link.error || line.biosample.id.error || line.donor_biosample.exported.error) ? 'yes' : 'no' "></span></td>
     </tr></tbody>
     </table>
 </div>
