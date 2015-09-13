@@ -24,43 +24,111 @@ sub find_batches {
   return $cached_batches;
 }
 
+sub batch_to_linked_line {
+  my ($batch) = @_;
+  my $link_prop = $batch->property('origin cell line');
+  return undef if !$link_prop;
+  return BioSD::fetch_sample($link_prop->values->[0]);
+};
+
+sub batch_to_linked_donor {
+  my ($batch) = @_;
+  my $link_prop = $batch->property('origin donor');
+  return undef if !$link_prop;
+  return BioSD::fetch_sample($link_prop->values->[0]);
+};
+
+sub batch_to_derived_from_line {
+  my ($batch) = @_;
+  my ($line) = @{$batch->samples};
+  while (1) {
+    return undef if !$line;
+    return $line if $line->property('Sample Name')->values->[0] !~ /vial *\d+/;
+    ($line) = @{$line->derived_from};
+  }
+}
+
+sub batch_to_name_from_vial {
+  my ($batch) = @_;
+  my ($line) = @{$batch->samples};
+  return undef if !$line;
+  my $name = $line->property('Sample Name')->values->[0];
+  $name =~ s/\s+vial *\d+\s*$//;
+  return $name;
+}
+
+
 sub find_lines {
   return $cached_lines if defined $cached_lines;
   my %lines;
   BATCH:
   foreach my $batch (@{find_batches()}) {
-    my ($line, $donor_id, $line_name);
-    my ( $batch_donor_link, $batch_line_link) = (0,0);
-    if ($batch->property('origin cell line')) {
-      $batch_line_link = 1;
-      my $line_id = $batch->property('origin cell line')->values->[0];
-      $line = BioSD::fetch_sample($line_id);
-      next BATCH if !$line;
-      ($line_name) = $line->property('Sample Name')->values->[0];
-      if (my $prop = $batch->property('origin donor')) {
-        $batch_donor_link = 1;
-        $donor_id = $prop->values->[0];
+    my $linked_line = batch_to_linked_line($batch);
+    my $linked_donor = batch_to_linked_donor($batch);
+    my $derived_from_line = batch_to_derived_from_line($batch);
+
+    if ($linked_line && $derived_from_line && ($linked_line->id ne $derived_from_line->id)) {
+      foreach my $line ($linked_line, $derived_from_line) {
+        my $line_name = $line->property('Sample Name')->values->[0];
+        $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name};
+        $lines{$line_name}{batch_line_link}{error} = 1;
+        $lines{$line_name}{batch_line_link}{error_batch} //= [];
+        push(@{$lines{$line_name}{batch_line_link}{error_batch}}, $batch->id);
+        if ($linked_donor) {
+          $lines{$line_name}{batch_donor_link}{id} = $linked_donor->id;
+          $lines{$line_name}{batch_donor_link}{error} = $linked_donor->id eq $lines{$line_name}{batch_donor_link}{id} ? ($lines{$line_name}{batch_donor_link}{error} || 0) : 1;
+        }
+        else {
+          $lines{$line_name}{batch_donor_link}{error} = 1;
+          $lines{$line_name}{batch_donor_link}{error_batch} //= [];
+          push(@{$lines{$line_name}{batch_donor_link}{error_batch}}, $batch->id);
+        }
+        $lines{$line_name}{id} //= $line->id;
+      }
+      next BATCH;
+    }
+
+    if ($linked_line || $derived_from_line) {
+      my $line_name = $linked_line ? $linked_line->property('Sample Name')->values->[0]
+                  : $derived_from_line->property('Sample Name')->values->[0];
+      $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name};
+      if (!$linked_line || !$derived_from_line) {
+        $lines{$line_name}{batch_line_link}{error} = 1;
+        $lines{$line_name}{batch_line_link}{error_batch} //= [];
+        push(@{$lines{$line_name}{batch_line_link}{error_batch}}, $batch->id);
+      }
+      else {
+        $lines{$line_name}{batch_line_link}{error} ||= 0;
+        $lines{$line_name}{batch_line_link}{id} ||= $linked_line ? $linked_line->id : $derived_from_line->id;
+      }
+      if ($linked_donor) {
+        $lines{$line_name}{batch_donor_link}{id} = $linked_donor->id;
+        $lines{$line_name}{batch_donor_link}{error} = $linked_donor->id eq $lines{$line_name}{batch_donor_link}{id} ? ($lines{$line_name}{batch_donor_link}{error} || 0) : 1;
+      }
+      else {
+        $lines{$line_name}{batch_donor_link}{error} = 1;
+        $lines{$line_name}{batch_donor_link}{error_batch} //= [];
+        push(@{$lines{$line_name}{batch_donor_link}{error_batch}}, $batch->id);
+      }
+      $lines{$line_name}{id} //= $linked_line ? $linked_line->id : $derived_from_line->id;
+      next BATCH;
+    }
+
+    if (my $line_name = batch_to_name_from_vial($batch)) {
+      $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name};
+      $lines{$line_name}{batch_line_link}{error} = 1;
+      $lines{$line_name}{batch_line_link}{error_batch} //= [];
+      push(@{$lines{$line_name}{batch_line_link}{error_batch}}, $batch->id);
+      if ($linked_donor) {
+        $lines{$line_name}{batch_donor_link}{id} = $linked_donor->id;
+        $lines{$line_name}{batch_donor_link}{error} = $linked_donor->id eq $lines{$line_name}{batch_donor_link}{id} ? ($lines{$line_name}{batch_donor_link}{error} || 0) : 1;
+      }
+      else {
+        $lines{$line_name}{batch_donor_link}{error} = 1;
+        $lines{$line_name}{batch_donor_link}{error_batch} //= [];
+        push(@{$lines{$line_name}{batch_donor_link}{error_batch}}, $batch->id);
       }
     }
-    else {
-      my ($vial) = @{$batch->search_for_samples('vial')};
-      next BATCH if !$vial;
-      ($line_name) = $vial->property('Sample Name')->values->[0] =~ /(\S+) vial *\d+/;
-      next BATCH if !$line_name;
-      DERIVED_FROM:
-      while(1) {
-        ($line) = @{$vial->derived_from()};
-        next BATCH if !$line;
-        last DERIVED_FROM if !$line->property('batch');
-        $vial = $line;
-      }
-    }
-    $lines{$line_name} ||= {batch_donor_links => 0, batch_line_links => 0, batches => 0};
-    $lines{$line_name}{line} ||= $line;
-    $lines{$line_name}{donor_id} ||= $donor_id;
-    $lines{$line_name}{batches} += 1;
-    $lines{$line_name}{batch_donor_links} += $batch_donor_link;
-    $lines{$line_name}{batch_line_links} += $batch_line_link;
   }
   $cached_lines = \%lines;
   return $cached_lines;

@@ -21,16 +21,12 @@ my %discovered;
 my %discovered_no_biosample;
 
 while (my ($line_name, $biosample_hash) = each %{ReseqTrack::EBiSC::BioSampleUtils::find_lines()}) {
-  $discovered{$biosample_hash->{line}->id}{biosample} = {
-    id => $biosample_hash->{line}->id,
-    exported => {error => 0},
-    name => $line_name,
-    batch_donor_link => {
-                id => $biosample_hash->{donor_id},
-                error => $biosample_hash->{batches} - $biosample_hash->{batch_donor_links},
-          },
-    batch_line_link => {error => $biosample_hash->{batches} - $biosample_hash->{batch_line_links}},
-    };
+  if ($biosample_hash->{id}) {
+    $discovered{$biosample_hash->{id}} = {biosample => $biosample_hash};
+  }
+  else {
+    $discovered_no_biosample{$line_name} = {biosample => $biosample_hash};
+  }
 }
 
 my $hESCreg = ReseqTrack::EBiSC::hESCreg->new(
@@ -60,6 +56,11 @@ foreach my $line_name (@{$hESCreg->find_lines()}) {
     biosample_id => $line->{biosamples_id},
     donor_biosample_id => $line->{biosamples_donor_id},
   };
+
+  if ($biosample_id && !${$line_output}->{biosample} && $discovered_no_biosample{$line->{name}}) {
+      ${$line_output}->{biosample} = $discovered_no_biosample{$line->{name}}{biosample};
+      delete $discovered_no_biosample{$line->{name}};
+  }
 }
 
 my $IMS = ReseqTrack::EBiSC::IMS->new(
@@ -87,7 +88,8 @@ foreach my $line (@{$IMS->find_lines->{objects}}) {
     donor_biosample_id => $line->{donor}{biosamples_id},
   };
 
-  if ($biosample_id && !${$line_output}->{hESCreg} && $discovered_no_biosample{$line->{name}}) {
+  if ($biosample_id && !${$line_output}->{biosample} && $discovered_no_biosample{$line->{name}}) {
+      ${$line_output}->{biosample} = $discovered_no_biosample{$line->{name}}{biosample};
       ${$line_output}->{hESCreg} = $discovered_no_biosample{$line->{name}}{hESCreg};
       delete $discovered_no_biosample{$line->{name}};
   }
@@ -108,8 +110,10 @@ while (my ($biosample_id, $line_hash) = each %discovered) {
     };
   }
 
-  if (! $line_hash->{biosample}) {
-    if (my $biosample = BioSD::fetch_sample($biosample_id)) {
+  if ($line_hash->{biosample}) {
+    $line_hash->{biosample}{exported}{error} = BioSD::fetch_sample($biosample_id) ? 0 : 1;
+  }
+  elsif (my $biosample = BioSD::fetch_sample($biosample_id)) {
       $line_hash->{biosample} = {
         id => $biosample_id,
         exported => {error => 0},
@@ -117,14 +121,13 @@ while (my ($biosample_id, $line_hash) = each %discovered) {
         batch_donor_link => {error => 0},
         batch_line_link => {error => 0},
       };
-    }
-    else {
-      $line_hash->{biosample} = {
-        exported => {error => 1},
-        batch_donor_link => {error => 0},
-        batch_line_link => {error => 0},
-      };
-    }
+  }
+  else {
+    $line_hash->{biosample} = {
+      exported => {error => 1},
+      batch_donor_link => {error => 0},
+      batch_line_link => {error => 0},
+    };
   }
 }
 
@@ -145,8 +148,8 @@ LINE:
 while (my ($hescreg_name, $line_hash) = each %discovered_no_biosample) {
   $line_hash->{biosample} = {
     exported => {error => 1},
-      batch_donor_link => {error => 0},
-      batch_line_link => {error => 0},
+    batch_donor_link => {error => 0},
+    batch_line_link => {error => 0},
   };
   if (! $line_hash->{IMS}) {
     $line_hash->{IMS} = {
@@ -204,10 +207,10 @@ foreach my $line_hash (@{$output{lines}}) {
                                   : $line_hash->{hESCreg}{exported}{error}  || !$line_hash->{hESCreg}{name} ? 'cannot test'
                                   : $line_hash->{IMS}{name} eq $line_hash->{hESCreg}{name} ? 'pass' : 'fail',
     'biosample id in IMS consistent with BioSamples database (where both have a biosample id)' => $line_hash->{IMS}{exported}{error}  || !$line_hash->{IMS}{biosample_id} ? 'cannot test'
-                                  : $line_hash->{biosample}{exported}{error}  || !$line_hash->{biosample}{id} ? 'cannot test'
+                                  : $line_hash->{biosample}{exported}{error}  || $line_hash->{biosample}{batch_line_link}{error} || !$line_hash->{biosample}{id} ? 'cannot test'
                                   : $line_hash->{biosample}{id} eq $line_hash->{IMS}{biosample_id} ? 'pass' : 'fail',
     'biosample id in hPSCreg consistent with BioSamples database (where both have an id)' => $line_hash->{hESCreg}{exported}{error}  || !$line_hash->{hESCreg}{biosample_id} ? 'cannot test'
-                                  : $line_hash->{biosample}{exported}{error}  || !$line_hash->{biosample}{id} ? 'cannot test'
+                                  : $line_hash->{biosample}{exported}{error}  || $line_hash->{biosample}{batch_line_link}{error} || !$line_hash->{biosample}{id} ? 'cannot test'
                                   : $line_hash->{biosample}{id} eq $line_hash->{hESCreg}{biosample_id} ? 'pass' : 'fail',
     'biosample id in IMS consistent with biosample id in hPSCreg (where both have an id)' => $line_hash->{IMS}{exported}{error}  || !$line_hash->{IMS}{biosample_id} ? 'cannot test'
                                   : $line_hash->{hESCreg}{exported}{error}  || !$line_hash->{hESCreg}{biosample_id} ? 'cannot test'
@@ -218,12 +221,10 @@ foreach my $line_hash (@{$output{lines}}) {
     'donor biosample id in hPSCreg consistent with BioSamples database (where both export an id)' => $line_hash->{hESCreg}{exported}{error}  || !$line_hash->{hESCreg}{donor_biosample_id} ? 'cannot test'
                                   : !$line_hash->{donor_biosample}{exported} ? 'cannot test'
                                   : $line_hash->{donor_biosample}{id} eq $line_hash->{hESCreg}{donor_biosample_id} ? 'pass' : 'fail',
-    'Biosamples exports the donor (where donor id is known)' => !$line_hash->{hESCreg}{donor_biosample_id}  && !$line_hash->{IMS}{donor_biosample_id} && $line_hash->{biosample}{batch_donor_link}{error} ? 'cannot test'
+    'Biosamples exports the donor (where donor id is known)' => !$line_hash->{biosample}{batch_donor_link}{id} && !$line_hash->{hESCreg}{donor_biosample_id}  && !$line_hash->{IMS}{donor_biosample_id} ? 'cannot test'
                                   : $line_hash->{donor_biosample}{exported}{error} ? 'fail' : 'pass',
-    'Biosamples batches have explicit link to the donor' => !$line_hash->{biosample}{exported}  ? 'cannot test'
-                                  : $line_hash->{biosample}{batch_donor_link}{error} ? 'fail' : 'pass',
-    'Biosamples batches have explicit link to the cell line' => !$line_hash->{biosample}{exported}  ? 'cannot test'
-                                  : $line_hash->{biosample}{batch_line_link}{error} ? 'fail' : 'pass',
+    'Biosamples batches have explicit link to cell line & consistent with derived-from' => $line_hash->{biosample}{batch_line_link}{error}  ? 'fail' : 'pass',
+    'Biosamples batches have explicit link to donor' => $line_hash->{biosample}{batch_donor_link}{error}  ? 'fail' : 'pass',
 
   );
 
@@ -247,10 +248,8 @@ foreach my $line_hash (@{$output{lines}}) {
   my $hescreg_donor_biosample_error = ! $line_hash->{hESCreg}{donor_biosample_id} ? 'hPSCreg does not export a donor biosample id for this cell line'
                         : $line_hash->{biosample}{batch_donor_link}{id} && $line_hash->{biosample}{batch_donor_link}{id} ne $line_hash->{hESCreg}{donor_biosample_id} ? 'The donor Biosample ID in hPSCreg does not match the BioSamples database'
                         : '';
-  my $biosample_error = ! $line_hash->{biosample}{id} ? 'BioSamples does not export the cell line with this ID'
-                        : $line_hash->{biosample}{batch_line_link}{error} ? 'A BioSamples batch is missing explicit link to the cell line'
-                        : $line_hash->{biosample}{batch_donor_link}{error} ? 'A BioSamples batch is missing explicit link to the donor'
-                        : '';
+  my $biosample_id_error = !$line_hash->{biosample}{id} && !$line_hash->{IMS}{biosample_id} && !$line_hash->{hESCreg}{biosample_id} ? 'BioSample id is not known'
+                        : $line_hash->{biosample}{exported}{error} ? 'BioSamples does not export the cell line with this ID' : '';
 
   $line_hash->{IMS}{name} = {val => $line_hash->{IMS}{name}, error => $ims_name_error ? 1:0, error_string => $ims_name_error};
   $line_hash->{IMS}{biosample_id} = {val => $line_hash->{IMS}{biosample_id}, error => $ims_biosample_error ? 1:0, error_string => $ims_biosample_error};
@@ -258,10 +257,9 @@ foreach my $line_hash (@{$output{lines}}) {
   $line_hash->{hESCreg}{name} = {val => $line_hash->{hESCreg}{name}, error => $hescreg_name_error ? 1 : 0, error_string => $hescreg_name_error};
   $line_hash->{hESCreg}{biosample_id} = {val => $line_hash->{hESCreg}{biosample_id}, error => $hescreg_biosample_error ? 1:0, error_string => $hescreg_biosample_error};
   $line_hash->{hESCreg}{donor_biosample_id} = {val => $line_hash->{hESCreg}{donor_biosample_id}, error => $hescreg_donor_biosample_error ? 1:0, error_string => $hescreg_donor_biosample_error};
-  $line_hash->{biosample}{id} = {val => $line_hash->{biosample}{id}, error => $biosample_error ? 1 : 0, error_string => $biosample_error};
-  $line_hash->{biosample}{batch_line_link}{error_string} = $line_hash->{biosample}{batch_line_link}{error} ? 'Not all batches have an explicit link to the cell line' : '';
-  $line_hash->{biosample}{batch_donor_link}{error_string} = $line_hash->{biosample}{batch_donor_link}{error} ? 'Not all batches have an explicit link to the donor' : '';
-
+  $line_hash->{biosample}{id} = {val => $line_hash->{biosample}{id}, error => $biosample_id_error ? 1 : 0, error_string => $biosample_id_error};
+  $line_hash->{biosample}{batch_line_link}{error_string} = $line_hash->{biosample}{batch_line_link}{error} ? 'At least one batch has inconsistent or missing links to the cell line' : '';
+  $line_hash->{biosample}{batch_donor_link}{error_string} = $line_hash->{biosample}{batch_donor_link}{error} ? 'At least one batch has inconsistent or missing links to the donor' : '';
   $line_hash->{consensus}{donor_biosample}{error} = $line_hash->{hESCreg}{donor_biosample_id}{error} ? 1
                                                     : $line_hash->{IMS}{donor_biosample_id}{error} ? 1
                                                     : ! $line_hash->{donor_biosample}{exported} ? 1

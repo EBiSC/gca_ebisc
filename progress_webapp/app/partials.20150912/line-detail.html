@@ -90,7 +90,7 @@
 
     <tr>
       <td>Exported by Biosamples</td>
-      <td ng-class="{danger: line.biosample.exported.error, success: !line.biosample.exported.error}"><span ng-bind="line.biosample.exported.error ? 'no' : 'yes'"><span></td>
+      <td ng-class="{danger: line.biosample.exported.error, success: !line.biosample.exported.error}"><span ng-bind="line.biosample.id.val || 'uknown id'"><span></td>
       <td ng-bind="line.biosample.exported.error ? 'This cell line is not exported by Biosamples API' : ''"></td>
       <td ng-bind="line.biosample.exported.error_date"></td>
     </tr>
@@ -106,16 +106,16 @@
       <td ng-bind="!line.donor_biosample.id ? 'donor Biosample ID is unknown' : line.donor_biosample.exported.error ? 'Biosamples API does not export '+ line.donor_biosample.id : ''"></td>
       <td ng-bind="line.donor_biosample.exported.error_date"></td>
     </tr>
-    <tr ng-if="!line.biosample.exported.error">
-      <td>Number of batches in BioSamples missing an explicit link to the cell line</td>
-      <td ng-class="{danger: line.biosample.batch_line_link.error, success: !line.biosample.batch_line_link.error}"><span ng-bind="line.biosample.batch_line_link.error"><span></td>
-      <td></td>
+    <tr ng-if="line.biosample.batch_line_link.error || line.biosample.batch_line_link.id">
+      <td>BioSamples batch to line links consistent with derived-from</td>
+      <td ng-class="{danger: line.biosample.batch_line_link.error, success: !line.biosample.batch_line_link.error}"><span ng-bind="line.biosample.batch_line_link.error ? 'Errors' : 'No errors'"><span></td>
+      <td><span ng-bind="line.biosample.batch_line_link.error ? 'check batches '+line.biosample.batch_line_link.error_batch.join(', ') : ''"></span></td>
       <td ng-bind="line.biosample.batch_line_link.error_date"></td>
     </tr>
-    <tr ng-if="!line.biosample.exported.error">
-      <td>Number of batches in BioSamples missing an explicit link to the donor</td>
-      <td ng-class="{danger: line.biosample.batch_donor_link.error, success: !line.biosample.batch_donor_link.error}"><span ng-bind="line.biosample.batch_donor_link.error"><span></td>
-      <td></td>
+    <tr ng-if="line.biosample.batch_donor_link.error || line.biosample.batch_donor_link.id">
+      <td>BioSamples batch to donor links consistent with derived-from</td>
+      <td ng-class="{danger: line.biosample.batch_donor_link.error, success: !line.biosample.batch_donor_link.error}"><span ng-bind="line.biosample.batch_donor_link.error ? 'Errors' : 'No errors'"><span></td>
+      <td><span ng-bind="line.biosample.batch_donor_link.error ? 'check batches '+line.biosample.batch_donor_link.error_batch.join(', ') : ''"></span></td>
       <td ng-bind="line.biosample.batch_donor_link.error_date"></td>
     </tr>
 </div>
