@@ -113,7 +113,7 @@
       <td ng-bind="line.biosample.batch_line_link.error_date"></td>
     </tr>
     <tr ng-if="line.biosample.batch_donor_link.error || line.biosample.batch_donor_link.id">
-      <td>BioSamples batch to donor links consistent with derived-from</td>
+      <td>BioSamples batch to donor links are present for every batch</td>
       <td ng-class="{danger: line.biosample.batch_donor_link.error, success: !line.biosample.batch_donor_link.error}"><span ng-bind="line.biosample.batch_donor_link.error ? 'Errors' : 'No errors'"><span></td>
       <td><span ng-bind="line.biosample.batch_donor_link.error ? 'check batches '+line.biosample.batch_donor_link.error_batch.join(', ') : ''"></span></td>
       <td ng-bind="line.biosample.batch_donor_link.error_date"></td>
