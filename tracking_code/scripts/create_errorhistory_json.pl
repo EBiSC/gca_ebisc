@@ -28,8 +28,8 @@ foreach my $file (@files) {
 
 #  Extract test results for each day
 my %all_tests;
-my %tests_totalled;
-foreach my $filedate (keys(%oneperday_files)) {
+my @tests_totalled;
+foreach my $filedate (sort keys(%oneperday_files)) {
 	open my $IN, '<', $oneperday_files{$filedate}[1] or die "could not open $oneperday_files{$filedate}[1] $!";
 	my @lines = <$IN>;
 	close $IN;
@@ -53,9 +53,20 @@ foreach my $filedate (keys(%oneperday_files)) {
 			 	$cannot_test = $value;
 			 }
 		}
-		$all_tests{$description}{$filedate} = {'pass' => $pass, 'fail' => $fail, 'cannot test' => $cannot_test};
-		$tests_totalled{$filedate} = $tests->{'tests_totalled'};
+		$all_tests{$description}{$filedate} = {'term' => &viewable_filedate($filedate), 'count' => $fail};
 	}
+	my $totalfail = 0;
+	while (my ($key, $val) = each %{$tests->{tests_totalled}}) {
+		if ($key eq "fail"){
+		 	$totalfail = $val;
+		}
+	}
+	
+	push(@tests_totalled, {'term' => &viewable_filedate($filedate), 'count' => $totalfail});
 }
 
-print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \%tests_totalled});
+print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \@tests_totalled});
+
+sub viewable_filedate{
+	my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
+}
