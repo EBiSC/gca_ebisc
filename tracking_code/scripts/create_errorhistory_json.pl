@@ -29,6 +29,7 @@ foreach my $file (@files) {
 #  Extract test results for each day
 my %all_tests;
 my @tests_totalled;
+my %calender_tests_totalled;
 foreach my $filedate (sort keys(%oneperday_files)) {
 	open my $IN, '<', $oneperday_files{$filedate}[1] or die "could not open $oneperday_files{$filedate}[1] $!";
 	my @lines = <$IN>;
@@ -63,10 +64,14 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 	}
 	
 	push(@tests_totalled, {'term' => &viewable_filedate($filedate), 'count' => $totalfail});
+	my @last_30_days = (30 >= @tests_totalled) ? @tests_totalled : @tests_totalled[30..-1];
+	$calender_tests_totalled{'thirty_days'}=\@last_30_days;
 }
 
-print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \@tests_totalled});
+print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \%calender_tests_totalled});
 
 sub viewable_filedate{
-	my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
+	#my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
+	#  No year
+	my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2)
 }
