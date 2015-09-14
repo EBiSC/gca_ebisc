@@ -15,22 +15,22 @@ ebiscProgress.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
     when('/', {
-      templateUrl: 'partials.20150912/line-list.html',
+      templateUrl: 'partials.20150914/line-list.html',
       controller: 'LineListCtrl',
       controllerAs: 'LineCtrl',
     }).
     when('/errors', {
-      templateUrl: 'partials.20150912/errors.html',
+      templateUrl: 'partials.20150914/errors.html',
       controller: 'ErrorListCtrl',
       controllerAs: 'ErrorCtrl',
     }).
     when('/tests', {
-      templateUrl: 'partials.20150912/tests.html',
+      templateUrl: 'partials.20150914/tests.html',
       controller: 'TestListCtrl',
       controllerAs: 'TestCtrl',
     }).
     when('/:line', {
-      templateUrl: 'partials.20150912/line-detail.html',
+      templateUrl: 'partials.20150914/line-detail.html',
       controller: 'LineDetailCtrl',
       controllerAs: 'LineCtrl',
     }).
