@@ -84,3 +84,11 @@ controllers.controller('TestListCtrl', ['List', function(List) {
 
 }]);
 
+controllers.controller('HistoryListCtrl', ['List', function(List) {
+    var controller = this;
+    this.errorhistory = List.query({name: 'api_error_history'});
+    this.errorhistory.$promise.then(function(data) {
+      controller.errorhistory = {terms: data.tests_total_history};
+    });
+
+}]);
