@@ -11,3 +11,13 @@ div.sort-arrows {
 div.after-sort-arrows {
   margin-left: 25px;
 }
+/* charts on the homepage */
+.history-chart {
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  float: none;
+}
+.history-chart p {
+  text-align: center;
+}
