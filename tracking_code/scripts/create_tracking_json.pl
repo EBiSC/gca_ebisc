@@ -6,6 +6,7 @@ use Getopt::Long;
 use ReseqTrack::EBiSC::BioSampleUtils;
 use ReseqTrack::EBiSC::hESCreg;
 use ReseqTrack::EBiSC::IMS;
+use ReseqTrack::EBiSC::LimsUtils;
 use JSON qw();
 
 my ($hESCreg_user, $hESCreg_pass, $IMS_user, $IMS_pass);
@@ -95,6 +96,25 @@ foreach my $line (@{$IMS->find_lines->{objects}}) {
   }
 }
 
+foreach my $batch ( @{ReseqTrack::EBiSC::LimsUtils::find_batches()}) {
+  my $line_output = ReseqTrack::EBiSC::LimsUtils::find_correct_line_hash($batch, \%discovered)
+                 || ReseqTrack::EBiSC::LimsUtils::find_correct_line_hash($batch, \%discovered_no_biosample);
+  if (!$line_output) {
+    $discovered_no_biosample{$batch->{cell_line}} //= {};
+    $line_output = $discovered_no_biosample{$batch->{cell_line}};
+  }
+
+  $line_output->{LIMS} //= {batches => []};
+  my %batch_hash = (
+    biosample_id => $batch->{biosamples_batch_id},
+    id => $batch->{batch_id},
+    name => $batch->{cell_line},
+    missing => ReseqTrack::EBiSC::LimsUtils::list_missing_data($batch),
+  );
+  push(@{$line_output->{LIMS}{batches}}, \%batch_hash);
+
+}
+
 
 LINE:
 while (my ($biosample_id, $line_hash) = each %discovered) {
@@ -107,6 +127,12 @@ while (my ($biosample_id, $line_hash) = each %discovered) {
     $line_hash->{hESCreg} = {
       exported => {error => 1},
       validated => {error =>1},
+    };
+  }
+
+  if (! $line_hash->{LIMS}) {
+    $line_hash->{LIMS} = {
+      batches => [],
     };
   }
 
@@ -162,7 +188,14 @@ while (my ($hescreg_name, $line_hash) = each %discovered_no_biosample) {
       validated => {error => 1},
     }
   }
-  my $name = List::Util::first {$_ && $_ =~ /[A-Z]{2,5}i[A-Z0-9]{3}-[A-Z](-[A-Z0-9])?/ } ($line_hash->{hESCreg}{name}, $line_hash->{IMS}{name});
+
+  if (! $line_hash->{LIMS}) {
+    $line_hash->{LIMS} = {
+      batches => [],
+    };
+  }
+
+  my $name = List::Util::first {$_ && $_ =~ /[A-Z]{2,5}i[A-Z0-9]{3}-[A-Z](-[A-Z0-9])?/ } ($line_hash->{hESCreg}{name}, $line_hash->{IMS}{name}, map {$_->{name}} @{$line_hash->{LIMS}{batches}});
   $line_hash->{consensus}{name} = {val => $name || '', error => $name ? 0 : 1,
         error_string => $name ? '' : 'could not find a name that looked like a hPSCreg name in any of the services (hPSCreg, IMS, BioSamples)',
   };
@@ -186,6 +219,21 @@ foreach my $line_hash (@{$output{lines}}) {
   else {
       $line_hash->{donor_biosample} = {exported =>{error => 1}};
   }
+
+  $line_hash->{LIMS}{missing_data} = {error => 0};
+  $line_hash->{LIMS}{name_batch_id_consistent} = {error => 0};
+  foreach my $batch (@{$line_hash->{LIMS}{batches}}) {
+    $line_hash->{LIMS}{missing_data}{error} ||= scalar @{$batch->{missing}} ? 1 : 0;
+    if ($batch->{name} ne $line_hash->{consensus}{name}{val} || ! scalar grep {$batch->{biosample_id} eq $_} @{$line_hash->{biosample}{batches}} ) {
+      $line_hash->{LIMS}{name_batch_id_consistent}{error} ||= 1;
+      $batch->{name_batch_id_consistent} = 0;
+    }
+    else {
+      $batch->{name_batch_id_consistent} = 1;
+    }
+  }
+  $line_hash->{LIMS}{missing_data}{error_string} = $line_hash->{LIMS}{missing_data}{error} ? 'One or more batches in "LIMS" is missing some data' : '';
+  $line_hash->{LIMS}{name_batch_id_consistent}{error_string} = $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'One or more batches in "LIMS" has an inconsistency between name and biosample id' : '';
 
   my %tests = (
     'IMS exports the cell line' => $line_hash->{IMS}{exported}{error} ? 'fail' : 'pass',
@@ -225,7 +273,8 @@ foreach my $line_hash (@{$output{lines}}) {
                                   : $line_hash->{donor_biosample}{exported}{error} ? 'fail' : 'pass',
     'Biosamples batches have explicit link to cell line & consistent with derived-from' => $line_hash->{biosample}{batch_line_link}{error}  ? 'fail' : 'pass',
     'Biosamples batches have explicit link to donor' => $line_hash->{biosample}{batch_donor_link}{error}  ? 'fail' : 'pass',
-
+    '"LIMS" data complete for all batches' => $line_hash->{LIMS}{missing_data}{error} ? 'fail' : 'pass',
+    '"LIMS" batch id and cell line name are consistent with BioSamples' => $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'fail' : 'pass',
   );
 
   my $ims_name_error = ! $line_hash->{IMS}{name} ? 'IMS does not export any name for this cell line'

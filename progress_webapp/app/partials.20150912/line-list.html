@@ -26,6 +26,7 @@
     <th ng-click="LineCtrl.sortBy('IMSOther')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Other IMS errors</div></th>
     <th ng-click="LineCtrl.sortBy('hESCregOther')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Other hPSCreg errors</div></th>
     <th ng-click="LineCtrl.sortBy('biosampleOther')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">Other Biosample errors</div></th>
+    <th ng-click="LineCtrl.sortBy('LIMS')"><div class="sort-arrows"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></div><div class="after-sort-arrows">&#34;LIMS&#34; errors</div></th>
     </tr></thead>
     <tbody> <tr ng-repeat="line in LineCtrl.data.lines">
       <td><span ng-bind="$index+1"></span></td>
@@ -38,6 +39,7 @@
       <td ng-class="{danger: !line.IMS.exported.error && (line.IMS.biosample_id.error || line.IMS.donor_biosample_id.error || line.IMS.name.error)}"><span ng-bind="line.IMS.exported.error ? '{cannot test yet}' : (line.IMS.biosample_id.error || line.IMS.donor_biosample_id.error || line.IMS.name.error) ? 'yes' : 'no' "></span></td>
       <td ng-class="{danger: !line.hESCreg.exported.error && (line.hESCreg.biosample_id.error || line.hESCreg.donor_biosample_id.error || line.hESCreg.name.error)}"><span ng-bind="line.hESCreg.exported.error ? '{cannot test yet}' : (line.hESCreg.biosample_id.error || line.hESCreg.donor_biosample_id.error || line.hESCreg.name.error) ? 'yes' : 'no' "></span></td>
       <td ng-class="{danger: !line.biosample.exported.error && (line.biosample.batch_donor_link.error || line.biosample.batch_line_link.error || line.biosample.id.error || line.donor_biosample.exported.error)}"><span ng-bind="line.biosample.exported.error ? '{cannot test yet}' : (line.biosample.batch_donor_link.error || line.biosample.batch_line_link.error || line.biosample.id.error || line.donor_biosample.exported.error) ? 'yes' : 'no' "></span></td>
+      <td ng-class="{danger: line.LIMS.missing_data.error || line.LIMS.name_batch_id_consistent.error, success: line.LIMS.batches.length && !line.LIMS.missing_data.error && !line.LIMS.name_batch_id_consistent.error}"><span ng-bind="line.LIMS.batches.length == 0 ? '{cannot test yet}' : line.LIMS.missing_data.error ? 'yes' : line.LIMS.name_batch_id_consistent.error ? 'yes' : 'no'"></span></td>
     </tr></tbody>
     </table>
 </div>

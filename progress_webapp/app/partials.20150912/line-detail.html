@@ -118,4 +118,11 @@
       <td><span ng-bind="line.biosample.batch_donor_link.error ? 'check batches '+line.biosample.batch_donor_link.error_batch.join(', ') : ''"></span></td>
       <td ng-bind="line.biosample.batch_donor_link.error_date"></td>
     </tr>
+    <tr ng-repeat="batch in line.LIMS.batches">
+      <td>Batch in &#34;LIMS&#34;</td>
+      <td ng-class="{danger: batch.missing.length || !batch.name_batch_id_consistent}"><span ng-bind="batch.id"></span> <span ng-if="batch.biosample_id" ng-bind="batch.biosample_id"></span></td>
+      <td><p ng-if="batch.missing.length"><span ng-bind="'Missing data: ' + batch.missing.join(', ')"></span></p>
+          <p ng-if="!batch.name_batch_id_consistent"><span ng-bind="cell line name and batch biosample id are not consistent with BioSamples"></span></p></td>
+      <td></td>
+    </tr>
 </div>

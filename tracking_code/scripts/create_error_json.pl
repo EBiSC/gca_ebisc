@@ -46,6 +46,10 @@ foreach my $cell_line (@{$api_compares->{lines}}) {
     }
   }
 
+  if (scalar @{$cell_line->{LIMS}{batches}}) {
+    push(@errors, grep {$_} map {$_->{error_string}} @{$cell_line->{LIMS}}{qw(missing_data name_batch_id_consistent)});
+  }
+
   next LINE if !@errors;
   my $error_key = join('', sort @errors);
   $errors{$error_key} //= {errors => \@errors, lines =>[]};

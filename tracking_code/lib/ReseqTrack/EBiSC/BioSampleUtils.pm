@@ -70,7 +70,7 @@ sub find_lines {
     if ($linked_line && $derived_from_line && ($linked_line->id ne $derived_from_line->id)) {
       foreach my $line ($linked_line, $derived_from_line) {
         my $line_name = $line->property('Sample Name')->values->[0];
-        $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name};
+        $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name, batches=>[]};
         $lines{$line_name}{batch_line_link}{error} = 1;
         $lines{$line_name}{batch_line_link}{error_batch} //= [];
         push(@{$lines{$line_name}{batch_line_link}{error_batch}}, $batch->id);
@@ -84,6 +84,7 @@ sub find_lines {
           push(@{$lines{$line_name}{batch_donor_link}{error_batch}}, $batch->id);
         }
         $lines{$line_name}{id} //= $line->id;
+        push(@{$lines{$line_name}{batches}}, $batch->id);
       }
       next BATCH;
     }
@@ -91,7 +92,7 @@ sub find_lines {
     if ($linked_line || $derived_from_line) {
       my $line_name = $linked_line ? $linked_line->property('Sample Name')->values->[0]
                   : $derived_from_line->property('Sample Name')->values->[0];
-      $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name};
+      $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name, batches => []};
       if (!$linked_line || !$derived_from_line) {
         $lines{$line_name}{batch_line_link}{error} = 1;
         $lines{$line_name}{batch_line_link}{error_batch} //= [];
@@ -111,11 +112,12 @@ sub find_lines {
         push(@{$lines{$line_name}{batch_donor_link}{error_batch}}, $batch->id);
       }
       $lines{$line_name}{id} //= $linked_line ? $linked_line->id : $derived_from_line->id;
+      push(@{$lines{$line_name}{batches}}, $batch->id);
       next BATCH;
     }
 
     if (my $line_name = batch_to_name_from_vial($batch)) {
-      $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name};
+      $lines{$line_name} ||= {batch_donor_link => {}, batch_line_link => {}, name => $line_name, batches => []};
       $lines{$line_name}{batch_line_link}{error} = 1;
       $lines{$line_name}{batch_line_link}{error_batch} //= [];
       push(@{$lines{$line_name}{batch_line_link}{error_batch}}, $batch->id);
@@ -128,6 +130,7 @@ sub find_lines {
         $lines{$line_name}{batch_donor_link}{error_batch} //= [];
         push(@{$lines{$line_name}{batch_donor_link}{error_batch}}, $batch->id);
       }
+      push(@{$lines{$line_name}{batches}}, $batch->id);
     }
   }
   $cached_lines = \%lines;
