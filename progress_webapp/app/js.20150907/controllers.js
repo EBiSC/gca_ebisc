@@ -88,7 +88,12 @@ controllers.controller('HistoryListCtrl', ['List', function(List) {
     var controller = this;
     this.errorhistory = List.query({name: 'api_error_history'});
     this.errorhistory.$promise.then(function(data) {
-      controller.errorhistory = {terms: data.tests_total_history.thirty_days};
+      controller.errorhistory = {terms: data.tests_total_history.thirty_days.fail};
     });
+    this.passhistory = List.query({name: 'api_error_history'});
+    this.passhistory.$promise.then(function(data) {
+      controller.passhistory = {terms: data.tests_total_history.thirty_days.pass};
+    });
+
 
 }]);
