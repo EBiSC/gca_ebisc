@@ -28,7 +28,8 @@ foreach my $file (@files) {
 
 #  Extract test results for each day
 my %all_tests;
-my @tests_totalled;
+my @tests_totalled_fail;
+my @tests_totalled_pass;
 my %calender_tests_totalled;
 foreach my $filedate (sort keys(%oneperday_files)) {
 	open my $IN, '<', $oneperday_files{$filedate}[1] or die "could not open $oneperday_files{$filedate}[1] $!";
@@ -37,35 +38,33 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 	my $tests = JSON::decode_json(join('', @lines));
 	foreach my $test (@{$tests->{tests}}) {
 		my $description;
-		my $pass = 0;
 		my $fail = 0;
-		my $cannot_test = 0;
 		while ( my ($key, $value) = each(%$test) ) {
 			 if ($key eq "description"){
 			 	$description = $value;
 			 }
-			 if ($key eq "pass"){
-			 	$pass = $value;
-			 }
 			 if ($key eq "fail"){
 			 	$fail = $value;
-			 }
-			 if ($key eq "cannot test"){
-			 	$cannot_test = $value;
 			 }
 		}
 		$all_tests{$description}{$filedate} = {'term' => &viewable_filedate($filedate), 'count' => $fail};
 	}
 	my $totalfail = 0;
+	my $totalpass = 0;
 	while (my ($key, $val) = each %{$tests->{tests_totalled}}) {
 		if ($key eq "fail"){
 		 	$totalfail = $val;
 		}
+		if ($key eq "pass"){
+		 	$totalpass = $val;
+		}
 	}
 	
-	push(@tests_totalled, {'term' => &viewable_filedate($filedate), 'count' => $totalfail});
-	my @last_30_days = (30 >= @tests_totalled) ? @tests_totalled : @tests_totalled[30..-1];
-	$calender_tests_totalled{'thirty_days'}=\@last_30_days;
+	push(@tests_totalled_fail, {'term' => &viewable_filedate($filedate), 'count' => $totalfail});
+	push(@tests_totalled_pass, {'term' => &viewable_filedate($filedate), 'count' => $totalpass});
+	my @last_30_days_fail = (30 >= @tests_totalled_fail) ? @tests_totalled_fail : @tests_totalled_fail[30..-1];
+	my @last_30_days_pass = (30 >= @tests_totalled_pass) ? @tests_totalled_pass : @tests_totalled_pass[30..-1];
+	$calender_tests_totalled{'thirty_days'}={fail => \@last_30_days_fail, pass => \@last_30_days_pass};
 }
 
 print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \%calender_tests_totalled});
