@@ -28,6 +28,7 @@ foreach my $file (@files) {
 
 #  Extract test results for each day
 my %all_tests;
+my %calender_all_tests;
 my @tests_totalled_fail;
 my @tests_totalled_pass;
 my %calender_tests_totalled;
@@ -49,6 +50,9 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 		}
 		$all_tests{$description}{$filedate} = {'term' => &viewable_filedate($filedate), 'count' => $fail};
 	}
+
+
+
 	my $totalfail = 0;
 	my $totalpass = 0;
 	while (my ($key, $val) = each %{$tests->{tests_totalled}}) {
@@ -62,12 +66,27 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 	
 	push(@tests_totalled_fail, {'term' => &viewable_filedate($filedate), 'count' => $totalfail});
 	push(@tests_totalled_pass, {'term' => &viewable_filedate($filedate), 'count' => $totalpass});
-	my @last_30_days_fail = (30 >= @tests_totalled_fail) ? @tests_totalled_fail : @tests_totalled_fail[30..-1];
-	my @last_30_days_pass = (30 >= @tests_totalled_pass) ? @tests_totalled_pass : @tests_totalled_pass[30..-1];
-	$calender_tests_totalled{'thirty_days'}={fail => \@last_30_days_fail, pass => \@last_30_days_pass};
 }
 
-print JSON::encode_json({testhistory => \%all_tests, tests_total_history => \%calender_tests_totalled});
+#  For each test, only keep last 30 days
+foreach my $description (sort keys(%all_tests)) {
+	if ($description eq "hPSCreg exports a biosample ID (where line is exported)"){
+		my $readable_description = "hpscregexports";
+		my @allkeys = sort keys $all_tests{$description};
+		$calender_all_tests{$readable_description}{'thirty_days'} = [];
+		my @last_30_days_allkeys = (30 >= @allkeys) ? @allkeys : @allkeys[30..-1];
+		foreach my $kept (@last_30_days_allkeys){
+			push($calender_all_tests{$readable_description}{'thirty_days'}, $all_tests{$description}{$kept});
+		} 
+	}
+}
+
+my @last_30_days_fail = (30 >= @tests_totalled_fail) ? @tests_totalled_fail : @tests_totalled_fail[30..-1];
+my @last_30_days_pass = (30 >= @tests_totalled_pass) ? @tests_totalled_pass : @tests_totalled_pass[30..-1];
+$calender_tests_totalled{'thirty_days'}={fail => \@last_30_days_fail, pass => \@last_30_days_pass};
+
+
+print JSON::encode_json({testhistory => \%calender_all_tests, tests_total_history => \%calender_tests_totalled});
 
 sub viewable_filedate{
 	#my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
