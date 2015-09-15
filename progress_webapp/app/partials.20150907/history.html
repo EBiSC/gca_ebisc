@@ -6,11 +6,22 @@
     </div>
     <div class="panel panel-default">
     <div class="panel-heading">
-        <h2 class="panel-title">Total number of errors (last 30 days)</h2>
+        <h2 class="panel-title">Total number of cell lines failing one or more test (last 30 days)</h2>
     </div>
     <div class="panel-body">
         <div class="history-chart col-sm-6 col-md-6 col-lg-6">
-        <fs-column bind="HistoryCtrl.errorhistory" height="500" width="1000" label="Number of errors"></fs-column> 
+        <fs-column bind="HistoryCtrl.errorhistory" height="500" width="1000" color="#EDD6D6" label="Cell lines failing one or more test"></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines passing all tests (last 30 days)</h2>
+    </div>
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <fs-column bind="HistoryCtrl.passhistory" height="500" width="1000" color="#D9EDCE" label="Cell lines passing all tests"></fs-column> 
         </div>
         </div>    
     </div>    
