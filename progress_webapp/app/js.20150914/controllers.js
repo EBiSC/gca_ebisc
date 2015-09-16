@@ -83,3 +83,41 @@ controllers.controller('TestListCtrl', ['List', function(List) {
 
 }]);
 
+controllers.controller('HistoryListCtrl', ['List', function(List) {
+    var controller = this;
+    this.totalhistory = List.query({name: 'api_error_history'});
+    this.totalhistory.$promise.then(function(data) {
+      controller.totalhistory = {terms: data.tests_total_history.raw.thirty_days.total};
+    });
+    this.errorhistoryprop = List.query({name: 'api_error_history'});
+    this.errorhistoryprop.$promise.then(function(data) {
+      controller.errorhistoryprop = {terms: data.tests_total_history.proportion.thirty_days.fail};
+    });
+    this.passhistoryprop = List.query({name: 'api_error_history'});
+    this.passhistoryprop.$promise.then(function(data) {
+      controller.passhistoryprop = {terms: data.tests_total_history.proportion.thirty_days.pass};
+    });
+    this.errorhistoryraw = List.query({name: 'api_error_history'});
+    this.errorhistoryraw.$promise.then(function(data) {
+      controller.errorhistoryraw = {terms: data.tests_total_history.raw.thirty_days.fail};
+    });
+    this.passhistoryraw = List.query({name: 'api_error_history'});
+    this.passhistoryraw.$promise.then(function(data) {
+      controller.passhistoryraw = {terms: data.tests_total_history.raw.thirty_days.pass};
+    });
+    this.printDiv= function(divName) {
+      var printContents = document.getElementById(divName).innerHTML;
+      var originalContents = document.body.innerHTML;
+
+      document.body.innerHTML = printContents;
+
+      window.print();
+
+      document.body.innerHTML = originalContents;
+      location.reload();
+   }
+}]);
+
+
+
+

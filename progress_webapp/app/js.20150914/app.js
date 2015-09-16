@@ -6,6 +6,7 @@ var dependencies = [
   'ebiscProgress.controllers',
   'ebiscProgress.services',
   'ui.bootstrap',
+  'dangle'
 ];
 
 // Declare app level module which depends on filters, and services
@@ -28,6 +29,11 @@ ebiscProgress.config(['$routeProvider',
       templateUrl: 'partials.20150914/tests.html',
       controller: 'TestListCtrl',
       controllerAs: 'TestCtrl',
+    }).
+    when('/history', {
+      templateUrl: 'partials.20150907/history.html',
+      controller: 'HistoryListCtrl',
+      controllerAs: 'HistoryCtrl',
     }).
     when('/:line', {
       templateUrl: 'partials.20150914/line-detail.html',
