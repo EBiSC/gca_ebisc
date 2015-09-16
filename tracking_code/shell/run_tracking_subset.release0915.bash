@@ -26,4 +26,5 @@ perl $EBISC_CODE/tracking_code/scripts/subset_for_release.pl -api_compares_json 
 && perl $EBISC_CODE/tracking_code/scripts/create_tests_json.pl -api_compares_json $HOME/api_compares.subset.json > $HOME/api_tests.subset.json \
 && mv -f $HOME/api_compares.subset.json /homes/ebiscdcc/public_html/release0915/json/api_compares.json \
 && mv -f $HOME/api_errors.subset.json /homes/ebiscdcc/public_html/release0915/json/errors.json \
-&& mv -f $HOME/api_tests.subset.json /homes/ebiscdcc/public_html/release0915/json/tests.json
+&& mv -f $HOME/api_tests.subset.json /homes/ebiscdcc/public_html/release0915/json/tests.json \
+&& cp /homes/ebiscdcc/public_html/track/json/error_history.json /homes/ebiscdcc/public_html/release0915/json/error_history.json
