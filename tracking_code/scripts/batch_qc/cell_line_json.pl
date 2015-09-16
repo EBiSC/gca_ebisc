@@ -148,18 +148,17 @@ FILE:
 foreach my $file ( keys %cache_files) {
   next FILE if $file !~ m{/incoming/wp5/certificate_of_analysis/};
   my $filename = File::Basename::fileparse($file);
-  my ($ecacc_id) = $filename =~ /cat no (\d+)/i;
-  $coas{$ecacc_id} = {
+  my ($cell_line, $batch) = split(/\./, $filename);
+  $coas{$cell_line}{$batch} = {
     file => $cache_files{$file},
     md5 => $cache_md5s{$cache_files{$file}},
   };
 }
-foreach my $cell_line_hash (values %cell_lines) {
+while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
   BATCH:
-  foreach my $batch_hash (values %$cell_line_hash) {
-    next BATCH if !$batch_hash->{ecacc_cat_no};
-    next BATCH if !$coas{$batch_hash->{ecacc_cat_no}};
-    $batch_hash->{certificate_of_analysis} = $coas{$batch_hash->{ecacc_cat_no}};
+  while (my ($batch, $batch_hash) = each %$cell_line_hash) {
+    next BATCH if !$coas{$cell_line}{$batch};
+    $batch_hash->{certificate_of_analysis} = $coas{$cell_line}{$batch};
   }
 }
 
