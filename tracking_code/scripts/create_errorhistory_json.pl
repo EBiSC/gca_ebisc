@@ -13,7 +13,7 @@ GetOptions("tracking_json=s" => \$tracking_json);
 my @files;
 find sub {push @files, $File::Find::name if /^api_tests\.\d+/}, $tracking_json;
 
-#  Filter file list for latest version on any particular day, avoid messy graphs
+#  Filter file list for latest version on any particular day, avoids messy graphs
 my %oneperday_files;
 foreach my $file (@files) {
 	my @parts = split('\.', $file);
@@ -26,7 +26,7 @@ foreach my $file (@files) {
    	} 
 }
 
-#  Extract test results for each day
+
 my %all_tests;
 my %calender_all_tests;
 my @tests_totalled_fail;
@@ -35,6 +35,8 @@ my @tests_totalled_fail_prop;
 my @tests_totalled_pass_prop;
 my @tests_totalled_lines;
 my %calender_tests_totalled;
+
+#  Extract test results for each day
 foreach my $filedate (sort keys(%oneperday_files)) {
 	open my $IN, '<', $oneperday_files{$filedate}[1] or die "could not open $oneperday_files{$filedate}[1] $!";
 	my @lines = <$IN>;
@@ -53,8 +55,6 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 		}
 		$all_tests{$description}{$filedate} = {'term' => &viewable_filedate($filedate), 'count' => $fail};
 	}
-
-
 
 	my $totalfail = 0;
 	my $totalpass = 0;
@@ -79,28 +79,32 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 #		my $readable_description = "hpscregvalidated";
 #		my @allkeys = sort keys $all_tests{$description};
 #		$calender_all_tests{$readable_description}{'thirty_days'} = [];
-#		my @last_30_days_allkeys = (30 >= @allkeys) ? @allkeys : @allkeys[30..-1];
+#		my @last_30_days_allkeys = &last_30_days(@allkeys);
 #		foreach my $kept (@last_30_days_allkeys){
 #			push($calender_all_tests{$readable_description}{'thirty_days'}, $all_tests{$description}{$kept});
 #		} 
 #	}
 #}
 
-my @last_30_days_fail = (30 >= @tests_totalled_fail) ? @tests_totalled_fail : @tests_totalled_fail[30..-1];
-my @last_30_days_pass = (30 >= @tests_totalled_pass) ? @tests_totalled_pass : @tests_totalled_pass[30..-1];
-my @last_30_days_fail_prop = (30 >= @tests_totalled_fail_prop) ? @tests_totalled_fail_prop : @tests_totalled_fail_prop[30..-1];
-my @last_30_days_pass_prop = (30 >= @tests_totalled_pass_prop) ? @tests_totalled_pass_prop : @tests_totalled_pass_prop[30..-1];
-my @last_30_days_lines = (30 >= @tests_totalled_lines) ? @tests_totalled_lines : @tests_totalled_lines[30..-1];
+my @last_30_days_fail = &last_30_days(@tests_totalled_fail);
+my @last_30_days_pass = &last_30_days(@tests_totalled_pass);
+my @last_30_days_fail_prop = &last_30_days(@tests_totalled_fail_prop);
+my @last_30_days_pass_prop = &last_30_days(@tests_totalled_pass_prop);
+my @last_30_days_lines = &last_30_days(@tests_totalled_lines);
 $calender_tests_totalled{'raw'}={thirty_days => {fail => \@last_30_days_fail, pass => \@last_30_days_pass, total => \@last_30_days_lines}};
 $calender_tests_totalled{'proportion'}={thirty_days => {fail => \@last_30_days_fail_prop, pass => \@last_30_days_pass_prop}};
 
-
-#print JSON::encode_json({testhistory => \%calender_all_tests, tests_total_history => \%calender_tests_totalled});
 #  Only include total tests
 print JSON::encode_json({tests_total_history => \%calender_tests_totalled});
+#  Also include all tests
+#print JSON::encode_json({testhistory => \%calender_all_tests, tests_total_history => \%calender_tests_totalled});
 
 sub viewable_filedate{
-	#my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
 	#  No year
 	my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2)
+	#  With year
+	#my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
+}
+sub last_30_days{
+	my @last_30_days = (30 >= @_) ? @_ : @_[30..-1];
 }
