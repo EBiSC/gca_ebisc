@@ -106,5 +106,19 @@ controllers.controller('HistoryListCtrl', ['List', function(List) {
     this.passhistoryraw.$promise.then(function(data) {
       controller.passhistoryraw = {terms: data.tests_total_history.raw.thirty_days.pass};
     });
+    this.printDiv= function(divName) {
+      var printContents = document.getElementById(divName).innerHTML;
+      var originalContents = document.body.innerHTML;
 
+      document.body.innerHTML = printContents;
+
+      window.print();
+
+      document.body.innerHTML = originalContents;
+      location.reload();
+   }
 }]);
+
+
+
+
