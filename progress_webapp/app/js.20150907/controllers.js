@@ -94,10 +94,9 @@ controllers.controller('HistoryListCtrl', ['List', function(List) {
     this.passhistory.$promise.then(function(data) {
       controller.passhistory = {terms: data.tests_total_history.thirty_days.pass};
     });
-    this.hpscregfailhistory = List.query({name: 'api_error_history'});
-    this.hpscregfailhistory.$promise.then(function(data) {
-      controller.hpscregfailhistory= {terms: data.testhistory.hpscregexports.thirty_days};
+    this.totalhistory = List.query({name: 'api_error_history'});
+    this.totalhistory.$promise.then(function(data) {
+      controller.totalhistory = {terms: data.tests_total_history.thirty_days.total};
     });
-
 
 }]);

@@ -6,6 +6,18 @@
     </div>
     <div class="panel panel-default">
     <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines (last 30 days)</h2>
+        <button class="btn btn-primary" ng-print print-element-id="printThisElement"><i class="fa fa-print"></i> Print</button>
+    </div>
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <fs-column bind="HistoryCtrl.totalhistory" height="500" width="1000" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
         <h2 class="panel-title">Total number of cell lines failing one or more test (last 30 days)</h2>
     </div>
     <div class="panel-body">
