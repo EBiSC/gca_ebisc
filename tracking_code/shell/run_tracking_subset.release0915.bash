@@ -16,6 +16,11 @@ perl $EBISC_CODE/tracking_code/scripts/subset_for_release.pl -api_compares_json 
       -allowed_line BIONi010-B \
       -allowed_line BIONi010-C \
       -allowed_line RBi001-A \
+      -allowed_line UKBi003-A \
+      -allowed_line UKBi008-A \
+      -allowed_line UKKi007-A \
+      -allowed_line UKKi007-B \
+      -allowed_line UKKi006-A \
       > $HOME/api_compares.subset.json \
 && perl $EBISC_CODE/tracking_code/scripts/create_error_json.pl -api_compares_json $HOME/api_compares.subset.json > $HOME/api_errors.subset.json \
 && perl $EBISC_CODE/tracking_code/scripts/create_tests_json.pl -api_compares_json $HOME/api_compares.subset.json > $HOME/api_tests.subset.json \
