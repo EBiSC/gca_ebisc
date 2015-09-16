@@ -4,10 +4,11 @@
     <div class="col-md-6"><a href="#/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Back to list of cell lines</a></div>
     </div>
     </div>
+    <button print-btn>Print graphs</button>
+    <div print-section>
     <div class="panel panel-default">
     <div class="panel-heading">
         <h2 class="panel-title">Total number of cell lines (last 30 days)</h2>
-        <button class="btn btn-primary" ng-print print-element-id="printThisElement"><i class="fa fa-print"></i> Print</button>
     </div>
     <div class="panel-body">
         <div class="history-chart col-sm-6 col-md-6 col-lg-6">
@@ -18,11 +19,33 @@
     </div>
     <div class="panel panel-default">
     <div class="panel-heading">
+        <h2 class="panel-title">Proportion of cell lines failing one or more test (last 30 days)</h2>
+    </div>
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <fs-column bind="HistoryCtrl.errorhistoryprop" height="500" width="1000" color="#EDD6D6" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Proportion of cell lines passing all tests (last 30 days)</h2>
+    </div>
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <fs-column bind="HistoryCtrl.passhistoryprop" height="500" width="1000" color="#D9EDCE" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
         <h2 class="panel-title">Total number of cell lines failing one or more test (last 30 days)</h2>
     </div>
     <div class="panel-body">
         <div class="history-chart col-sm-6 col-md-6 col-lg-6">
-        <fs-column bind="HistoryCtrl.errorhistory" height="500" width="1000" color="#EDD6D6" label="."></fs-column> 
+        <fs-column bind="HistoryCtrl.errorhistoryraw" height="500" width="1000" color="#EDD6D6" label="."></fs-column> 
         </div>
         </div>    
     </div>    
@@ -33,9 +56,10 @@
     </div>
     <div class="panel-body">
         <div class="history-chart col-sm-6 col-md-6 col-lg-6">
-        <fs-column bind="HistoryCtrl.passhistory" height="500" width="1000" color="#D9EDCE" label="."></fs-column> 
+        <fs-column bind="HistoryCtrl.passhistoryraw" height="500" width="1000" color="#D9EDCE" label="."></fs-column> 
         </div>
         </div>    
     </div>    
+    </div>
     </div>
 </div>

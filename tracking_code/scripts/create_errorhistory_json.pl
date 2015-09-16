@@ -31,6 +31,8 @@ my %all_tests;
 my %calender_all_tests;
 my @tests_totalled_fail;
 my @tests_totalled_pass;
+my @tests_totalled_fail_prop;
+my @tests_totalled_pass_prop;
 my @tests_totalled_lines;
 my %calender_tests_totalled;
 foreach my $filedate (sort keys(%oneperday_files)) {
@@ -66,6 +68,8 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 	}
 	push(@tests_totalled_fail, {'term' => &viewable_filedate($filedate), 'count' => $totalfail});
 	push(@tests_totalled_pass, {'term' => &viewable_filedate($filedate), 'count' => $totalpass});
+	push(@tests_totalled_fail_prop, {'term' => &viewable_filedate($filedate), 'count' => (($totalfail/($totalpass+$totalfail))*100)});
+	push(@tests_totalled_pass_prop, {'term' => &viewable_filedate($filedate), 'count' => (($totalpass/($totalpass+$totalfail))*100)});
 	push(@tests_totalled_lines, {'term' => &viewable_filedate($filedate), 'count' => ($totalpass+$totalfail)});
 }
 
@@ -84,8 +88,11 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 
 my @last_30_days_fail = (30 >= @tests_totalled_fail) ? @tests_totalled_fail : @tests_totalled_fail[30..-1];
 my @last_30_days_pass = (30 >= @tests_totalled_pass) ? @tests_totalled_pass : @tests_totalled_pass[30..-1];
+my @last_30_days_fail_prop = (30 >= @tests_totalled_fail_prop) ? @tests_totalled_fail_prop : @tests_totalled_fail_prop[30..-1];
+my @last_30_days_pass_prop = (30 >= @tests_totalled_pass_prop) ? @tests_totalled_pass_prop : @tests_totalled_pass_prop[30..-1];
 my @last_30_days_lines = (30 >= @tests_totalled_lines) ? @tests_totalled_lines : @tests_totalled_lines[30..-1];
-$calender_tests_totalled{'thirty_days'}={fail => \@last_30_days_fail, pass => \@last_30_days_pass, total => \@last_30_days_lines};
+$calender_tests_totalled{'raw'}={thirty_days => {fail => \@last_30_days_fail, pass => \@last_30_days_pass, total => \@last_30_days_lines}};
+$calender_tests_totalled{'proportion'}={thirty_days => {fail => \@last_30_days_fail_prop, pass => \@last_30_days_pass_prop}};
 
 
 #print JSON::encode_json({testhistory => \%calender_all_tests, tests_total_history => \%calender_tests_totalled});
