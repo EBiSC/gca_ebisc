@@ -11,10 +11,11 @@ use Digest::MD5::File qw(file_md5_hex);
 my $date = strftime('%Y%m%d', localtime);
 
 my $drop_base = '/nfs/production/reseq-info/drop/ebisc-data';
+my $track_base = '/nfs/production/reseq-info/work/ebiscdcc/api_tracking';
 my $incoming_dir = $drop_base.'/incoming';
-my $manifest_dir = $drop_base.'/manifests';
-my $cache_base = "$drop_base/cache";
-my $dated_cache_base = "$drop_base/cache/$date";
+my $manifest_dir = $track_base.'/manifests';
+my $cache_base = "$track_base/cache";
+my $dated_cache_base = "$track_base/cache/$date";
 my $current_manifest = $manifest_dir.'/manifests.current.tsv';
 my $output_manifest = "$manifest_dir/manifests.$date.tsv";
 
