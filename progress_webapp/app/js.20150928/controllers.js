@@ -105,6 +105,26 @@ controllers.controller('HistoryListCtrl', ['List', function(List) {
     this.passhistoryraw.$promise.then(function(data) {
       controller.passhistoryraw = {terms: data.tests_total_history.raw.thirty_days.pass};
     });
+    this.week_averagetotalhistory = List.query({name: 'error_history'});
+    this.week_averagetotalhistory.$promise.then(function(data) {
+      controller.week_averagetotalhistory = {terms: data.tests_total_history.raw.week_average.total};
+    });
+    this.week_averageerrorhistoryprop = List.query({name: 'error_history'});
+    this.week_averageerrorhistoryprop.$promise.then(function(data) {
+      controller.week_averageerrorhistoryprop = {terms: data.tests_total_history.proportion.week_average.fail};
+    });
+    this.week_averagepasshistoryprop = List.query({name: 'error_history'});
+    this.week_averagepasshistoryprop.$promise.then(function(data) {
+      controller.week_averagepasshistoryprop = {terms: data.tests_total_history.proportion.week_average.pass};
+    });
+    this.week_averageerrorhistoryraw = List.query({name: 'error_history'});
+    this.week_averageerrorhistoryraw.$promise.then(function(data) {
+      controller.week_averageerrorhistoryraw = {terms: data.tests_total_history.raw.week_average.fail};
+    });
+    this.week_averagepasshistoryraw = List.query({name: 'error_history'});
+    this.week_averagepasshistoryraw.$promise.then(function(data) {
+      controller.week_averagepasshistoryraw = {terms: data.tests_total_history.raw.week_average.pass};
+    });
     this.printDiv= function(divName) {
       var printContents = document.getElementById(divName).innerHTML;
       var originalContents = document.body.innerHTML;
