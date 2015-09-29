@@ -1,0 +1,170 @@
+<div class="panel panel-default">
+    <div class="row">
+    <div class="col-md-6"> <h3 >History of errors</h3> </div>
+    <div class="col-md-6"><a href="#/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Back to list of cell lines</a></div>
+    </div>
+    </div>
+    <p></p>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines (period average)  </h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printtotal')" value="Print graph (or save as PDF)" /> 
+    <div id="printtotal">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Total number of cell lines (period average)</p>
+        <fs-column bind="HistoryCtrl.week_averagetotalhistory" height="600" width="1000" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Proportion of cell lines failing one or more test (period average)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printfailprop')" value="Print graph (or save as PDF)" /> 
+    <div id="printfailprop">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Proportion of cell lines failing one or more test (period average)</p>
+        <fs-column bind="HistoryCtrl.week_averageerrorhistoryprop" height="600" width="1000" color="#EDD6D6" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Proportion of cell lines passing all tests (period average)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printpassprop')" value="Print graph (or save as PDF)" /> 
+    <div id="printpassprop">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Proportion of cell lines passing all tests (period average)</p>
+        <fs-column bind="HistoryCtrl.week_averagepasshistoryprop" height="600" width="1000" color="#D9EDCE" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines failing one or more test (period average)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printfailraw')" value="Print graph (or save as PDF)" /> 
+    <div id="printfailraw">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Total number of cell lines failing one or more test (period average)</p>
+        <fs-column bind="HistoryCtrl.week_averageerrorhistoryraw" height="600" width="1000" color="#EDD6D6" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines passing all tests (period average)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printpassraw')" value="Print graph (or save as PDF)" /> 
+    <div id="printpassraw">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Total number of cell lines passing all tests (period average)</p>
+        <fs-column bind="HistoryCtrl.week_averagepasshistoryraw" height="600" width="1000" color="#D9EDCE" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines (last 30 days)  </h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printtotal')" value="Print graph (or save as PDF)" /> 
+    <div id="printtotal">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Total number of cell lines (last 30 days)</p>
+        <fs-column bind="HistoryCtrl.totalhistory" height="600" width="1600" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Proportion of cell lines failing one or more test (last 30 days)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printfailprop')" value="Print graph (or save as PDF)" /> 
+    <div id="printfailprop">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Proportion of cell lines failing one or more test (last 30 days)</p>
+        <fs-column bind="HistoryCtrl.errorhistoryprop" height="600" width="1600" color="#EDD6D6" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Proportion of cell lines passing all tests (last 30 days)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printpassprop')" value="Print graph (or save as PDF)" /> 
+    <div id="printpassprop">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Proportion of cell lines passing all tests (last 30 days)</p>
+        <fs-column bind="HistoryCtrl.passhistoryprop" height="600" width="1600" color="#D9EDCE" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines failing one or more test (last 30 days)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printfailraw')" value="Print graph (or save as PDF)" /> 
+    <div id="printfailraw">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Total number of cell lines failing one or more test (last 30 days)</p>
+        <fs-column bind="HistoryCtrl.errorhistoryraw" height="600" width="1600" color="#EDD6D6" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Total number of cell lines passing all tests (last 30 days)</h2>
+    </div>
+    <p></p>
+    <input type="button" ng-click="HistoryCtrl.printDiv('printpassraw')" value="Print graph (or save as PDF)" /> 
+    <div id="printpassraw">
+    <div class="panel-body">
+        <div class="history-chart col-sm-6 col-md-6 col-lg-6">
+        <p>Total number of cell lines passing all tests (last 30 days)</p>
+        <fs-column bind="HistoryCtrl.passhistoryraw" height="600" width="1600" color="#D9EDCE" label="."></fs-column> 
+        </div>
+        </div>    
+    </div>    
+    </div>
+    </div>
+</div>
+
+

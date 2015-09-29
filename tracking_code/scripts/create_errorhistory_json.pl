@@ -5,6 +5,7 @@ use warnings;
 use Getopt::Long;
 use File::Find qw(find);
 use JSON qw();
+use Data::Dumper;
 
 my $tracking_json;
 
@@ -34,6 +35,11 @@ my @tests_totalled_pass;
 my @tests_totalled_fail_prop;
 my @tests_totalled_pass_prop;
 my @tests_totalled_lines;
+my @month_tests_totalled_fail;
+my @month_tests_totalled_pass;
+my @month_tests_totalled_fail_prop;
+my @month_tests_totalled_pass_prop;
+my @month_tests_totalled_lines;
 my %calender_tests_totalled;
 
 #  Extract test results for each day
@@ -71,6 +77,11 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 	push(@tests_totalled_fail_prop, {'term' => &viewable_filedate($filedate), 'count' => (($totalfail/($totalpass+$totalfail))*100)});
 	push(@tests_totalled_pass_prop, {'term' => &viewable_filedate($filedate), 'count' => (($totalpass/($totalpass+$totalfail))*100)});
 	push(@tests_totalled_lines, {'term' => &viewable_filedate($filedate), 'count' => ($totalpass+$totalfail)});
+	push(@month_tests_totalled_fail, {'term' => $filedate, 'count' => $totalfail});
+	push(@month_tests_totalled_pass, {'term' => $filedate, 'count' => $totalpass});
+	push(@month_tests_totalled_fail_prop, {'term' => $filedate, 'count' => (($totalfail/($totalpass+$totalfail))*100)});
+	push(@month_tests_totalled_pass_prop, {'term' => $filedate, 'count' => (($totalpass/($totalpass+$totalfail))*100)});
+	push(@month_tests_totalled_lines, {'term' => $filedate, 'count' => ($totalpass+$totalfail)});
 }
 
 #  For each test, only keep last 30 days - currently not needed
@@ -86,13 +97,19 @@ foreach my $filedate (sort keys(%oneperday_files)) {
 #	}
 #}
 
+my @months_fail = &month_average(@month_tests_totalled_fail);
+my @months_pass = &month_average(@month_tests_totalled_pass);
+my @months_fail_prop = &month_average(@month_tests_totalled_fail_prop);
+my @months_pass_prop = &month_average(@month_tests_totalled_pass_prop);
+my @months_lines = &month_average(@month_tests_totalled_lines);
+
 my @last_30_days_fail = &last_30_days(@tests_totalled_fail);
 my @last_30_days_pass = &last_30_days(@tests_totalled_pass);
 my @last_30_days_fail_prop = &last_30_days(@tests_totalled_fail_prop);
 my @last_30_days_pass_prop = &last_30_days(@tests_totalled_pass_prop);
 my @last_30_days_lines = &last_30_days(@tests_totalled_lines);
-$calender_tests_totalled{'raw'}={thirty_days => {fail => \@last_30_days_fail, pass => \@last_30_days_pass, total => \@last_30_days_lines}};
-$calender_tests_totalled{'proportion'}={thirty_days => {fail => \@last_30_days_fail_prop, pass => \@last_30_days_pass_prop}};
+$calender_tests_totalled{'raw'}={thirty_days => {fail => \@last_30_days_fail, pass => \@last_30_days_pass, total => \@last_30_days_lines}, week_average => {fail => \@months_fail, pass => \@months_pass, total => \@months_lines}};
+$calender_tests_totalled{'proportion'}={thirty_days => {fail => \@last_30_days_fail_prop, pass => \@last_30_days_pass_prop}, week_average => {fail => \@months_fail_prop, pass => \@months_pass_prop}};
 
 #  Only include total tests
 print JSON::encode_json({tests_total_history => \%calender_tests_totalled});
@@ -106,5 +123,27 @@ sub viewable_filedate{
 	#my $viewable_filedate = substr($_[0], 6, 2).'-'.substr($_[0], 4, 2).'-'.substr($_[0], 0, 4);
 }
 sub last_30_days{
-	my @last_30_days = (30 >= @_) ? @_ : @_[30..-1];
+	my @last_30_days = (30 >= @_) ? @_ : @_[-30..-1];
+}
+sub month_average{
+	my @month_avg;
+	my $currentday;
+	my %total;
+	my %days;
+	foreach my $date (@_){
+		my $viewable_date = &viewable_filedate($$date{'term'});
+		my ($day, $month) = split('-', $viewable_date);
+		if ($day =~ '01'||$day eq '07'||$day eq '14'||$day eq '21'||$day eq '28'){
+			$currentday = $$date{'term'};
+			$total{$currentday}= int($$date{'count'});
+			$days{$currentday}+=1;
+		}else{
+			$total{$currentday}= int($$date{'count'})+$total{$currentday};
+			$days{$currentday}+=1;
+		}
+	}
+	foreach my $key (sort keys %total){
+		push(@month_avg, {'term' => &viewable_filedate($key), 'count' => $total{$key}/$days{$key}});
+	}
+	return @month_avg;
 }
