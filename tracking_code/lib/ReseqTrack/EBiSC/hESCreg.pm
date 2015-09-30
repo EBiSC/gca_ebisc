@@ -21,8 +21,8 @@ sub BUILD {
 }
 
 sub find_lines {
-  my ($self) = @_;
-  my $url = sprintf('http://%s/api/full_list', $self->base_url);
+  my ($self, %options) = @_;
+  my $url = sprintf('http://%s%s', $self->base_url, $options{url}||"/api/full_list");
   my $response = $self->ua->get($url);
   die $response->status_line if $response->is_error;
   my $content = eval{decode_json($response->content);};
