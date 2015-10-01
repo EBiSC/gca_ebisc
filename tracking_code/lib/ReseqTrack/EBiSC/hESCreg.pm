@@ -8,22 +8,30 @@ use LWP::UserAgent;
 use HTTP::Request;
 use JSON qw(decode_json encode_json);
 
-has 'base_url' => (is => 'rw', isa => 'Str', default => 'hpscreg.eu:80');
+has 'host' => (is => 'rw', isa => 'Str', default => 'hpscreg.eu');
 has 'ua' => (is => 'ro', isa => 'LWP::UserAgent', default => sub {return LWP::UserAgent->new;});
 
 has 'realm' => (is => 'rw', isa => 'Str', default => 'hPSCreg API');
 has 'user' => (is => 'rw', isa => 'Str');
 has 'pass' => (is => 'rw', isa => 'Str');
+has 'port' => (is => 'rw', isa => 'Int', default => 80);
+
+has 'base_url' => (is => 'ro', isa => 'Str', builder => '_build_base_url', lazy => 1);
 
 sub BUILD {
   my ($self) = @_;
-  $self->ua->credentials($self->base_url, $self->realm, $self->user, $self->pass);
+  $self->ua->credentials(sprintf("%s:%u", $self->host, $self->port), $self->realm, $self->user, $self->pass);
   $self->ua->timeout(5);
 }
 
+sub _build_base_url {
+    my ($self) = @_;
+    return $self->port == 80 ? sprintf('http://%s', $self->host) : sprintf('http://%s:%s', $self->host, $self->port);
+  };
+
 sub find_lines {
   my ($self, %options) = @_;
-  my $url = sprintf('http://%s%s', $self->base_url, $options{url}||"/api/full_list");
+  my $url = sprintf('%s%s', $self->base_url, $options{url}||"/api/full_list");
   my $response = $self->ua->get($url);
   die $response->status_line if $response->is_error;
   my $content = eval{decode_json($response->content);};
@@ -35,7 +43,7 @@ sub find_lines {
 
 sub get_line {
   my ($self, $line_name) = @_;
-  my $url = sprintf('http://%s/api/export/%s', $self->base_url, $line_name);
+  my $url = sprintf('%s/api/export/%s', $self->base_url, $line_name);
   my $response = $self->ua->get($url);
   die $response->status_line if $response->is_error;
   my $content = eval{decode_json($response->content);};
@@ -45,18 +53,35 @@ sub get_line {
   return $content;
 }
 
-sub post_line {
-  my ($self, $hash) = @_;
-  my $url = sprintf('http://%s/api/create_cell_line', $self->base_url);
+sub create_name {
+  my ($self, %args) = @_;
+  my %req_data;
+  foreach (qw(provider_id same_donor_cell_line_id subclone_cell_line_id)) {
+    $req_data{$_} = $args{$_} || '';
+  }
+  $req_data{type} = 'i';
+  my $url = sprintf('%s/api/create_name', $self->base_url);
   my $req = HTTP::Request->new(POST => $url);
   $req->content_type('application/json');
+  $req->content(encode_json(\%req_data));
+  my $response = $self->ua->request($req);
+  die $response->status_line if $response->is_error;
+  my ($name) = $response->content =~ /Success: ([^" ]+)/;
+  die "did not get name from content".$response->content if !$name;
+  return $name;
+}
+
+sub post_line {
+  my ($self, $hash) = @_;
+  my $url = sprintf('%s/api/create_cell_line', $self->base_url);
+  my $req = HTTP::Request->new(POST => $url);
+  $req->content_type('application/xml');
+  $req->header('Accept' => 'text/plain');
   $req->content(encode_json($hash));
-  #print $req->as_string();
 
   my $response = $self->ua->request($req);
-  #print $response->as_string();
   die $response->status_line if $response->is_error;
-  return $response->status_line;
+  return $response->content;
 }
 
 my $blank_post_json = '
