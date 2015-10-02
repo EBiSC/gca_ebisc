@@ -23,6 +23,7 @@
     <th>Passed</th>
     <th>Failed</th>
     <th>Cannot be tested</th>
+    <th>Total</th>
     </tr></thead>
     <tbody> <tr ng-repeat="test in TestCtrl.tests">
       <td><span ng-bind="$index+1"></span></td>
@@ -30,6 +31,7 @@
       <td><span ng-bind="test.pass || 0"></span></td>
       <td ng-class="{danger: test.fail, success: !test.fail}"><span ng-bind="test.fail || 0"></span></td>
       <td><span ng-bind="test['cannot test'] || 0"></span></td>
+      <td><span ng-bind="test['cannot test']+test.pass+test.fail"></span></td>
     </tr></tbody>
     </table>
     </div>
