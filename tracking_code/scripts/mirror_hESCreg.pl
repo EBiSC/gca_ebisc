@@ -17,7 +17,7 @@ GetOptions("user=s" => \$hESCreg_user,
 die "missing credentials" if !$hESCreg_user || !$hESCreg_pass;
 my $elasticsearch = Search::Elasticsearch->new(nodes => $es_host);
 
-$elasticsearch->indices->delete(index => 'hescreg');
+eval{$elasticsearch->indices->delete(index => 'hescreg');};
 $elasticsearch->indices->create(index => 'hescreg');
 $elasticsearch->indices->put_mapping(
   index => 'hescreg',
@@ -38,6 +38,8 @@ $elasticsearch->indices->put_mapping(
 my $hESCreg = ReseqTrack::EBiSC::hESCreg->new(
   user => $hESCreg_user,
   pass => $hESCreg_pass,
+  host => 'test.hescreg.eu',
+  realm => 'hESCreg Development'
 );
 
 LINE:
