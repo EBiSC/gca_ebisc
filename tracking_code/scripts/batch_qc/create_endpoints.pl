@@ -54,6 +54,19 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
       $coa->{updated} ||= $date;
       delete @$coa{qw(filename inode mtime)};
     }
+    if (my $aua = $batch_data->{access_use_agreement}) {
+      my $from = $aua->{file};
+      my $to = sprintf('file/%s/%s/%s', $aua->{inode}, $aua->{mtime}, $aua->{filename});
+      $export_files{$from} = $to;
+      $batch_data->{access_use_agreement}{file} = "$api_base/$to";
+      if (my $current_aua = $current_exported_batch->{data}{access_use_agreement}) {
+        if (File::Basename::fileparse($current_aua->{file}) eq File::Basename::fileparse($aua->{file}) && $current_aua->{md5} eq $aua->{md5}) {
+          $aua->{updated} = $current_aua->{updated};
+        }
+      }
+      $aua->{updated} ||= $date;
+      delete @$aua{qw(filename inode mtime)};
+    }
     if ($batch_data->{images}) {
       foreach my $image (@{$batch_data->{images}}) {
         my $from = $image->{file};

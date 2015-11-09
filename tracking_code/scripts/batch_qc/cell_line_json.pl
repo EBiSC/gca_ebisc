@@ -6,6 +6,7 @@ use File::Basename qw();
 use File::Path qw();
 use JSON;
 use POSIX qw(strftime);
+use List::Util qw(max);
 my $date = strftime('%Y%m%d', localtime);
 
 my $track_base = '/nfs/production/reseq-info/work/ebiscdcc/api_tracking';
@@ -31,6 +32,7 @@ my %column_map = (
   13 =>['culture_conditions/O2_concentration', {1 => '21%', free_text => 1}],
   14 =>['culture_conditions/temperature', {1 => '37C', free_text => 1}],
   #15 =>['additional_comments', {1 => 'Typical recovery after thaw, typical growth cycle', free_text => 1}],
+  16 =>['flag_go_live'],
 );
 
 
@@ -167,6 +169,31 @@ while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
   while (my ($batch, $batch_hash) = each %$cell_line_hash) {
     next BATCH if !$coas{$cell_line}{$batch};
     $batch_hash->{certificate_of_analysis} = $coas{$cell_line}{$batch};
+  }
+}
+
+my %auas;
+FILE:
+foreach my $incoming_file ( grep {$_ =~ m{/incoming/wp5/access_use_agreements/}} keys %cache_files) {
+  my $filename = File::Basename::fileparse($incoming_file);
+  my $cache_file = $cache_files{$incoming_file}->[5];
+  my ($cell_line, $version) = $filename =~ /^([^\.]+)\.eAUA(\d+)/;
+  next FILE if !$cell_line;
+  $auas{$cell_line}{$version} = {
+    file => $cache_file,
+    md5 => $cache_md5s{$cache_file},
+    filename => $filename,
+    inode => $cache_files{$incoming_file}->[1],
+    mtime => $cache_files{$incoming_file}->[2],
+  };
+}
+CELL_LINE:
+while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
+  next CELL_LINE if !$auas{$cell_line};
+  my $version = List::Util::max keys %{$auas{$cell_line}};
+  BATCH:
+  while (my ($batch, $batch_hash) = each %$cell_line_hash) {
+    $batch_hash->{access_use_agreement} = $auas{$cell_line}{$version};
   }
 }
 
