@@ -38,8 +38,8 @@ $elasticsearch->indices->put_mapping(
 my $hESCreg = ReseqTrack::EBiSC::hESCreg->new(
   user => $hESCreg_user,
   pass => $hESCreg_pass,
-  host => 'test.hescreg.eu',
-  realm => 'hESCreg Development'
+  #host => 'test.hescreg.eu',
+  #realm => 'hESCreg Development'
 );
 
 LINE:
