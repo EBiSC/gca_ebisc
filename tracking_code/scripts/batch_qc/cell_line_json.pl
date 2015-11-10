@@ -177,9 +177,8 @@ FILE:
 foreach my $incoming_file ( grep {$_ =~ m{/incoming/wp5/access_use_agreements/}} keys %cache_files) {
   my $filename = File::Basename::fileparse($incoming_file);
   my $cache_file = $cache_files{$incoming_file}->[5];
-  my ($cell_line, $version) = $filename =~ /^([^\.]+)\.eAUA(\d+)/;
-  next FILE if !$cell_line;
-  $auas{$cell_line}{$version} = {
+  my ($cell_line, $type, $version) = split(/\./, $filename);
+  $auas{$cell_line}{$type}{$version} = {
     file => $cache_file,
     md5 => $cache_md5s{$cache_file},
     filename => $filename,
@@ -190,10 +189,15 @@ foreach my $incoming_file ( grep {$_ =~ m{/incoming/wp5/access_use_agreements/}}
 CELL_LINE:
 while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
   next CELL_LINE if !$auas{$cell_line};
-  my $version = List::Util::max keys %{$auas{$cell_line}};
-  BATCH:
-  while (my ($batch, $batch_hash) = each %$cell_line_hash) {
-    $batch_hash->{access_use_agreement} = $auas{$cell_line}{$version};
+  TYPE:
+  foreach my $type (qw(eAUA prAUA)) {
+    next TYPE if !$auas{$cell_line}{$type};
+    my $version = List::Util::max keys %{$auas{$cell_line}{$type}};
+    my $key = $type == 'prAUA' ? 'pr_aua' : 'e_aua';
+    BATCH:
+    while (my ($batch, $batch_hash) = each %$cell_line_hash) {
+      $batch_hash->{$key} = $auas{$cell_line}{$type}{$version};
+    }
   }
 }
 
