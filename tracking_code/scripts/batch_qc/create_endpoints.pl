@@ -7,6 +7,7 @@ use POSIX qw(strftime);
 use Data::Compare;
 use File::Basename qw();
 use File::Path qw();
+use List::Util qw();
 my $date = strftime('%Y%m%d', localtime);
 
 my $track_base = '/nfs/production/reseq-info/work/ebiscdcc/api_tracking';
@@ -54,6 +55,25 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
       $coa->{updated} ||= $date;
       delete @$coa{qw(filename inode mtime)};
     }
+
+    if ($batch_data->{cell_line_information_packs}) {
+      foreach my $clip (@{$batch_data->{cell_line_information_packs}}) {
+        my $from = $clip->{file};
+        my $to = sprintf('file/%s/%s/%s', $clip->{inode}, $clip->{mtime}, $clip->{filename});
+        $export_files{$from} = $to;
+        $clip->{file} = "$api_base/$to";
+        my $version = $clip->{version};
+
+        if (my $current_clip = List::Util::first { $_->{version} eq $version } @{$current_exported_batch->{data}{cell_line_information_packs}}) {
+          if (File::Basename::fileparse($current_clip->{file}) eq File::Basename::fileparse($clip->{file}) && $current_clip->{md5} eq $clip->{md5}) {
+            $clip->{updated} = $current_clip->{updated};
+          }
+        }
+        $clip->{updated} ||= $date;
+        delete @$clip{qw(filename inode mtime)};
+      }
+    }
+
     foreach my $aua_type (qw(e_aua pr_aua)) {
       if (my $aua = $batch_data->{$aua_type}) {
         my $from = $aua->{file};

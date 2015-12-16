@@ -201,6 +201,30 @@ while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
   }
 }
 
+my %clips;
+FILE:
+foreach my $incoming_file ( grep {$_ =~ m{/incoming/wp5/cell_line_information_pack/}} keys %cache_files) {
+  my $filename = File::Basename::fileparse($incoming_file);
+  my $cache_file = $cache_files{$incoming_file}->[5];
+  my ($cell_line, undef, $version) = split(/\./, $filename);
+  push(@{$clips{$cell_line}}, {
+    file => $cache_file,
+    md5 => $cache_md5s{$cache_file},
+    filename => $filename,
+    inode => $cache_files{$incoming_file}->[1],
+    mtime => $cache_files{$incoming_file}->[2],
+    version => $version,
+  });
+}
+CELL_LINE:
+while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
+  next CELL_LINE if !$clips{$cell_line};
+  BATCH:
+  while (my ($batch, $batch_hash) = each %$cell_line_hash) {
+    $batch_hash->{cell_line_information_packs} = $clips{$cell_line};
+  }
+}
+
 open my $OUT, '>', $json_output or die "could not open $json_output $!";
 print $OUT encode_json(\%cell_lines);
 close $OUT;
