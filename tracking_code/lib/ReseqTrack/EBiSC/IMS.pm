@@ -17,7 +17,6 @@ has 'pass' => (is => 'rw', isa => 'Str');
 sub BUILD {
   my ($self) = @_;
   $self->ua->default_header(Authorization => sprintf('ApiKey %s:%s', $self->user, $self->pass));
-  $self->ua->ssl_opts(verify_hostname => 0);
   $self->ua->timeout(5);
 }
 
