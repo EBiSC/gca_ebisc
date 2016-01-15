@@ -68,6 +68,7 @@ sub list_missing_data {
   my ($batch) = @_;
   my @missing;
   push(@missing, 'certificate of analysis') if ! $batch->{certificate_of_analysis};
+  push(@missing, 'cell line information pack') if ! $batch->{cell_line_information_packs};
   CC:
   foreach my $item (qw(CO2_concentration O2_concentration matrix medium passage_method temperature)) {
     push(@missing, 'culture conditions') if ! $batch->{culture_conditions}{$item};
