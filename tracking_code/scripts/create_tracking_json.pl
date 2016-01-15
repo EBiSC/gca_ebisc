@@ -273,8 +273,10 @@ foreach my $line_hash (@{$output{lines}}) {
                                   : $line_hash->{donor_biosample}{exported}{error} ? 'fail' : 'pass',
     'Biosamples batches have explicit link to cell line & consistent with derived-from' => $line_hash->{biosample}{batch_line_link}{error}  ? 'fail' : 'pass',
     'Biosamples batches have explicit link to donor' => $line_hash->{biosample}{batch_donor_link}{error}  ? 'fail' : 'pass',
-    '"LIMS" data complete for all batches' => $line_hash->{LIMS}{missing_data}{error} ? 'fail' : 'pass',
-    '"LIMS" batch id and cell line name are consistent with BioSamples' => $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'fail' : 'pass',
+    '"LIMS" data complete for all batches' => !$line_hash->{LIMS}{batches}[0] ? 'cannot test' 
+                                  : $line_hash->{LIMS}{missing_data}{error} ? 'fail' : 'pass',
+    '"LIMS" batch id and cell line name are consistent with BioSamples' => !$line_hash->{LIMS}{batches}[0] ? 'cannot test' 
+                                  : $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'fail' : 'pass',
   );
 
   my $ims_name_error = ! $line_hash->{IMS}{name} ? 'IMS does not export any name for this cell line'
