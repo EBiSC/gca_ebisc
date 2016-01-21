@@ -1,6 +1,21 @@
 #!/bin/bash
 
 perl $EBISC_CODE/tracking_code/scripts/subset_for_release.pl -api_compares_json /homes/ebiscdcc/public_html/track/json/api_compares.json \
+      -allowed_line BIONi010-A \
+      -allowed_line BIONi010-B \
+      -allowed_line BIONi010-C \
+      -allowed_line RBi001-A \
+      -allowed_line RCi001-A \
+      -allowed_line RCi001-B \
+      -allowed_line RCI002-A \
+      -allowed_line RCI002-B \
+      -allowed_line RCi003-A \
+      -allowed_line RCi003-B \
+      -allowed_line RCi004-A \
+      -allowed_line RCi004-B \
+      -allowed_line UCLi001-A \
+      -allowed_line UCLi002-A \
+      -allowed_line UCLi003-A \
       -allowed_line UKBi002-A \
       -allowed_line UKBi003-A \
       -allowed_line UKBi005-A \
@@ -13,18 +28,10 @@ perl $EBISC_CODE/tracking_code/scripts/subset_for_release.pl -api_compares_json 
       -allowed_line UKKi009-B \
       -allowed_line UKKi011-A \
       -allowed_line UKKi012-A \
-      -allowed_line HUBi001-A \
-      -allowed_line HUBi007-A \
-      -allowed_line RCi001-A \
-      -allowed_line RCi001-B \
-      -allowed_line RCI002-A \
-      -allowed_line RCI002-B \
-      -allowed_line RCi003-A \
-      -allowed_line RCi003-B \
-      -allowed_line RCi004-A \
-      -allowed_line RCi004-B \
-      -allowed_line RBi001-A \
-      -allowed_line RCi006-A \
+      -allowed_line UNEWi001-A \
+      -allowed_line UNEWi002-A \
+      -allowed_line UNEWi004-A \
+      -allowed_line UNEWi005-A \
       -allowed_line WTSIi001-A \
       -allowed_line WTSIi002-A \
       -allowed_line WTSIi003-A \
