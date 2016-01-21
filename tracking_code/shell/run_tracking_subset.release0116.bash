@@ -7,8 +7,8 @@ perl $EBISC_CODE/tracking_code/scripts/subset_for_release.pl -api_compares_json 
       -allowed_line RBi001-A \
       -allowed_line RCi001-A \
       -allowed_line RCi001-B \
-      -allowed_line RCI002-A \
-      -allowed_line RCI002-B \
+      -allowed_line RCi002-A \
+      -allowed_line RCi002-B \
       -allowed_line RCi003-A \
       -allowed_line RCi003-B \
       -allowed_line RCi004-A \
