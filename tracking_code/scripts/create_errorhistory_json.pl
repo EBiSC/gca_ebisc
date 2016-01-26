@@ -133,7 +133,7 @@ sub month_average{
 	foreach my $date (@_){
 		my $viewable_date = &viewable_filedate($$date{'term'});
 		my ($day, $month) = split('-', $viewable_date);
-		if ($day =~ '01'||$day eq '07'||$day eq '14'||$day eq '21'||$day eq '28'){
+		if ($day =~ '01'||$day eq '14'||$day eq '28'){
 			$currentday = $$date{'term'};
 			$total{$currentday}= int($$date{'count'});
 			$days{$currentday}+=1;
