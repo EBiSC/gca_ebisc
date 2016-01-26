@@ -155,13 +155,16 @@ FILE:
 foreach my $incoming_file ( grep {$_ =~ m{/incoming/wp5/certificate_of_analysis/}} keys %cache_files) {
   my $filename = File::Basename::fileparse($incoming_file);
   my $cache_file = $cache_files{$incoming_file}->[5];
-  my ($cell_line, $batch) = split(/\./, $filename);
+  my ($cell_line, $batch, undef, $version) = split(/\./, $filename);
+  $version =~ s/[^\d]//g;
+  next FILE if $coas{$cell_line}{$batch} && $coas{$cell_line}{$batch}{$version} > $version;
   $coas{$cell_line}{$batch} = {
     file => $cache_file,
     md5 => $cache_md5s{$cache_file},
     filename => $filename,
     inode => $cache_files{$incoming_file}->[1],
     mtime => $cache_files{$incoming_file}->[2],
+    version => $version,
   };
 }
 while (my ($cell_line, $cell_line_hash) = each %cell_lines) {
