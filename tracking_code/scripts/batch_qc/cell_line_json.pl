@@ -141,7 +141,7 @@ while (my $line = <$fh>) {
     magnification => $magnification,
     timepoint => $timepoint,
     md5 => $cache_md5s{$cache_file},
-    filename => File::Basename::fileparse($incoming_file),
+    filename => scalar(File::Basename::fileparse($incoming_file)),
     inode => $cache_files{$incoming_file}->[1],
     mtime => $cache_files{$incoming_file}->[2],
   });
