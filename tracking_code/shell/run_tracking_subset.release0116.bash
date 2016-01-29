@@ -32,7 +32,6 @@ perl $EBISC_CODE/tracking_code/scripts/subset_for_release.pl -api_compares_json 
       -allowed_line UNEWi002-A \
       -allowed_line UNEWi004-A \
       -allowed_line UNEWi005-A \
-      -allowed_line WTSIi001-A \
       -allowed_line WTSIi002-A \
       -allowed_line WTSIi003-A \
       -allowed_line WTSIi004-A \
