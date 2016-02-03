@@ -56,13 +56,18 @@ sub get_line {
 sub create_name {
   my ($self, %args) = @_;
   my %req_data;
-  foreach (qw(provider_id same_donor_cell_line_id subclone_cell_line_id)) {
+  foreach (qw(provider_id same_donor_cell_line_id subclone_cell_line_id source_platform)) {
     $req_data{$_} = $args{$_} || '';
   }
   $req_data{type} = 'i';
+  $req_data{source_platform} ||= 'ebisc';
   my $url = sprintf('%s/api/create_name', $self->base_url);
   my $req = HTTP::Request->new(POST => $url);
   $req->content_type('application/json');
+  print encode_json(\%req_data), "\n";
+  print "continue y/n?\n";
+  my $continue = <STDIN>;
+  die if $continue !~ /y/i;
   $req->content(encode_json(\%req_data));
   my $response = $self->ua->request($req);
   die $response->status_line if $response->is_error;
@@ -79,6 +84,33 @@ sub post_line {
   $req->header('Accept' => 'text/plain');
   $req->content(encode_json($hash));
 
+  my $response = $self->ua->request($req);
+  die $response->status_line if $response->is_error;
+  #return $response->content;
+  return $response->as_string;
+}
+
+sub post_pluritest {
+  my ($self, $hash) = @_;
+  my $url = sprintf('%s/webapi/characterisation/pluritest', $self->base_url);
+  my $req = HTTP::Request->new(POST => $url);
+  $req->content_type('application/xml');
+  $req->header('Accept' => 'text/plain');
+
+  my %pluri_hash = (
+    cell_line_id => "",
+    pluripotency_score => "",
+    novelty_score => "",
+    microarray_url => "",
+    ldap_user_id => ""
+  );
+  foreach my $key (qw(cell_line_id pluripotency_score novelty_score microarray_url ldap_user_id)) {
+    $pluri_hash{$key} .= $hash->{$key} || '';
+  }
+  $pluri_hash{pluripotency_score} += 0;
+  $pluri_hash{novelty_score} += 0;
+  $pluri_hash{cell_line_id} += 0;
+  $req->content(encode_json(\%pluri_hash));
   my $response = $self->ua->request($req);
   die $response->status_line if $response->is_error;
   #return $response->content;
