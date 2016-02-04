@@ -47,8 +47,8 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
       my $from = $coa->{file};
       my $to = sprintf('file/%s/%s/%s', $coa->{inode}, $coa->{mtime}, $coa->{filename});
       $export_files{$from} = $to;
-      $to = uri_escape($to);
-      $batch_data->{certificate_of_analysis}{file} = "$api_base/$to";
+      my $uri_to = sprintf('file/%s/%s/%s', $coa->{inode}, $coa->{mtime}, uri_escape($coa->{filename}));
+      $batch_data->{certificate_of_analysis}{file} = "$api_base/$uri_to";
       if (my $current_coa = $current_exported_batch->{data}{certificate_of_analysis}) {
         if (File::Basename::fileparse($current_coa->{file}) eq File::Basename::fileparse($coa->{file}) && $current_coa->{md5} eq $coa->{md5}) {
           $coa->{updated} = $current_coa->{updated};
@@ -63,8 +63,8 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
         my $from = $clip->{file};
         my $to = sprintf('file/%s/%s/%s', $clip->{inode}, $clip->{mtime}, $clip->{filename});
         $export_files{$from} = $to;
-        $to = uri_escape($to);
-        $clip->{file} = "$api_base/$to";
+        my $uri_to = sprintf('file/%s/%s/%s', $clip->{inode}, $clip->{mtime}, uri_escape($clip->{filename}));
+        $clip->{file} = "$api_base/$uri_to";
         my $version = $clip->{version};
 
         if (my $current_clip = List::Util::first { $_->{version} eq $version } @{$current_exported_batch->{data}{cell_line_information_packs}}) {
@@ -82,8 +82,8 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
         my $from = $aua->{file};
         my $to = sprintf('file/%s/%s/%s', $aua->{inode}, $aua->{mtime}, $aua->{filename});
         $export_files{$from} = $to;
-        $to = uri_escape($to);
-        $batch_data->{$aua_type}{file} = "$api_base/$to";
+        my $uri_to = sprintf('file/%s/%s/%s', $aua->{inode}, $aua->{mtime}, uri_escape($aua->{filename}));
+        $batch_data->{$aua_type}{file} = "$api_base/$uri_to";
         if (my $current_aua = $current_exported_batch->{data}{$aua_type}) {
           if (File::Basename::fileparse($current_aua->{file}) eq File::Basename::fileparse($aua->{file}) && $current_aua->{md5} eq $aua->{md5}) {
             $aua->{updated} = $current_aua->{updated};
@@ -98,8 +98,8 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
         my $from = $image->{file};
         my $to = sprintf('file/%s/%s/%s', $image->{inode}, $image->{mtime}, $image->{filename});
         $export_files{$from} = $to;
-        $to = uri_escape($to);
-        $image->{file} = "$api_base/$to";
+        my $uri_to = sprintf('file/%s/%s/%s', $image->{inode}, $image->{mtime}, uri_escape($image->{filename}));
+        $image->{file} = "$api_base/$uri_to";
         if ($current_exported_batch->{data}{images}) {
           my ($current_image) = grep {File::Basename::fileparse($_->{file}) eq File::Basename::fileparse($image->{file}) && $_->{md5} eq $image->{md5}} @{$current_exported_batch->{data}{images}};
           if ($current_image) {
