@@ -5,6 +5,7 @@ use warnings;
 use JSON;
 use POSIX qw(strftime);
 use Data::Compare;
+use URI::Escape qw(uri_escape);
 use File::Basename qw();
 use File::Path qw();
 use List::Util qw();
@@ -46,6 +47,7 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
       my $from = $coa->{file};
       my $to = sprintf('file/%s/%s/%s', $coa->{inode}, $coa->{mtime}, $coa->{filename});
       $export_files{$from} = $to;
+      $to = uri_escape($to);
       $batch_data->{certificate_of_analysis}{file} = "$api_base/$to";
       if (my $current_coa = $current_exported_batch->{data}{certificate_of_analysis}) {
         if (File::Basename::fileparse($current_coa->{file}) eq File::Basename::fileparse($coa->{file}) && $current_coa->{md5} eq $coa->{md5}) {
@@ -61,6 +63,7 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
         my $from = $clip->{file};
         my $to = sprintf('file/%s/%s/%s', $clip->{inode}, $clip->{mtime}, $clip->{filename});
         $export_files{$from} = $to;
+        $to = uri_escape($to);
         $clip->{file} = "$api_base/$to";
         my $version = $clip->{version};
 
@@ -79,6 +82,7 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
         my $from = $aua->{file};
         my $to = sprintf('file/%s/%s/%s', $aua->{inode}, $aua->{mtime}, $aua->{filename});
         $export_files{$from} = $to;
+        $to = uri_escape($to);
         $batch_data->{$aua_type}{file} = "$api_base/$to";
         if (my $current_aua = $current_exported_batch->{data}{$aua_type}) {
           if (File::Basename::fileparse($current_aua->{file}) eq File::Basename::fileparse($aua->{file}) && $current_aua->{md5} eq $aua->{md5}) {
@@ -94,6 +98,7 @@ while (my ($cell_line, $batches) = each %$today_cell_lines) {
         my $from = $image->{file};
         my $to = sprintf('file/%s/%s/%s', $image->{inode}, $image->{mtime}, $image->{filename});
         $export_files{$from} = $to;
+        $to = uri_escape($to);
         $image->{file} = "$api_base/$to";
         if ($current_exported_batch->{data}{images}) {
           my ($current_image) = grep {File::Basename::fileparse($_->{file}) eq File::Basename::fileparse($image->{file}) && $_->{md5} eq $image->{md5}} @{$current_exported_batch->{data}{images}};
