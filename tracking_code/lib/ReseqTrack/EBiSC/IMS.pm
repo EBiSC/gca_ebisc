@@ -8,7 +8,7 @@ use LWP::UserAgent;
 use JSON qw(decode_json);
 use HTTP::Request::Common qw(POST);
 
-has 'base_url' => (is => 'rw', isa => 'Str', default => 'ebisc.douglasconnect.com');
+has 'base_url' => (is => 'rw', isa => 'Str', default => 'cells.ebisc.org');
 has 'ua' => (is => 'ro', isa => 'LWP::UserAgent', default => sub {return LWP::UserAgent->new;});
 
 has 'user' => (is => 'rw', isa => 'Str');
