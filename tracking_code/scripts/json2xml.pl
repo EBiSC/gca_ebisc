@@ -4,7 +4,7 @@ use warnings;
 
 use Getopt::Long;
 use JSON qw(decode_json encode_json);
-use XML::Writer;
+use ReseqTrack::EBiSC::XMLUtils qw(dump_xml);
 
 my ($jsoninfile, $xmloutfile, $filewrapper, $elementwrapper);
 
@@ -28,69 +28,12 @@ my $infile = do {
 
 my $json_full = decode_json($infile);
 
+my @json_keys = keys %$json_full;
+if (scalar @json_keys >1) {
+  die "json schema is not compatible for this script";
+}
+my %data = ($elementwrapper => $json_full->{$json_keys[0]});
 open(my $xmlfile, '>', $xmloutfile);
-my $writer = new XML::Writer(
-  OUTPUT => $xmlfile,
-  DATA_INDENT => 4,
-  CHECK_PRINT => 1,
-  DATA_MODE   => 1,
-);
+dump_xml($xmlfile, $filewrapper, \%data);
 
-$writer->xmlDecl( 'UTF-8' );
-$writer->startTag( $filewrapper );
-
-foreach my $sample (@{$json_full->{((keys($json_full))[0])}}){
-  $writer->startTag( $elementwrapper );
-  foreach my $field (sort keys $sample){
-    if (ref($$sample{$field}) eq 'HASH'){
-      $writer->startTag( $field );
-      foreach my $subfield (sort keys $$sample{$field}){
-        if (ref($$sample{$field}{$subfield}) eq 'HASH'){
-          $writer->startTag( $subfield );
-          foreach my $subsubfield (sort keys $$sample{$field}{$subfield}){
-            if (ref($$sample{$field}{$subfield}{$subsubfield}) eq 'ARRAY'){
-              foreach my $part (@{$$sample{$field}{$subfield}{$subsubfield}}){
-                &print_element($subsubfield, $part)
-              }
-            }else{
-              &print_element($subsubfield, $$sample{$field}{$subfield}{$subsubfield})
-            }
-          }
-          $writer->endTag($subfield);
-        }elsif (ref($$sample{$field}{$subfield}) eq 'ARRAY'){
-          foreach my $part (@{$$sample{$field}{$subfield}}){
-            &print_element($subfield, $part)
-          }
-        }else{
-          &print_element($subfield, $$sample{$field}{$subfield})
-        }
-      }
-      $writer->endTag($field);
-    }elsif (ref($$sample{$field}) eq 'ARRAY'){
-      foreach my $part (@{$$sample{$field}}){
-        if (ref($part) eq 'HASH'){
-          $writer->startTag( $field );
-          foreach my $subfield (sort keys $part){
-            &print_element($subfield, $$part{$subfield});
-          }
-          $writer->endTag( $field );
-        }else{
-          &print_element($field, $part)
-        }
-       }
-    }else{
-      &print_element($field, $$sample{$field})
-    }
-  }
-  $writer->endTag( $elementwrapper );
-}
-
-$writer->endTag( $filewrapper );
-$writer->end( );
 close($xmlfile);
-
-sub print_element{
-  $writer->startTag( $_[0] );
-  $writer->characters($_[1]);
-  $writer->endTag( $_[0] );
-}
