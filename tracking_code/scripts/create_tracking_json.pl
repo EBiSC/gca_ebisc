@@ -220,6 +220,8 @@ foreach my $line_hash (@{$output{lines}}) {
       $line_hash->{donor_biosample} = {exported =>{error => 1}};
   }
 
+  $line_hash->{IMS}{exported} ||= {error => 1};
+
   $line_hash->{LIMS}{missing_data} = {error => 0};
   $line_hash->{LIMS}{name_batch_id_consistent} = {error => 0};
   foreach my $batch (@{$line_hash->{LIMS}{batches}}) {
