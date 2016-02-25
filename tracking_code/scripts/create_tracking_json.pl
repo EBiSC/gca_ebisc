@@ -62,6 +62,18 @@ foreach my $line_name (@{$hESCreg->find_lines()}) {
       ${$line_output}->{biosample} = $discovered_no_biosample{$line->{name}}{biosample};
       delete $discovered_no_biosample{$line->{name}};
   }
+
+  if ($biosample_id && !${$line_output}->{biosample}) {
+    ALT:
+    foreach my $name ($line->{name}, @{$line->{alternate_name}}) {
+      if ($discovered_no_biosample{$name}) {
+          ${$line_output}->{biosample} = $discovered_no_biosample{$name}{biosample};
+          delete $discovered_no_biosample{$name};
+          last ALT;
+      }
+    }
+  }
+
 }
 
 my $IMS = ReseqTrack::EBiSC::IMS->new(
@@ -196,7 +208,7 @@ while (my ($hescreg_name, $line_hash) = each %discovered_no_biosample) {
   }
 
   my $name = List::Util::first {$_ && $_ =~ /[A-Z]{2,5}i[A-Z0-9]{3}-[A-Z](-[A-Z0-9])?/ } ($line_hash->{hESCreg}{name}, $line_hash->{IMS}{name}, map {$_->{name}} @{$line_hash->{LIMS}{batches}});
-  $line_hash->{consensus}{name} = {val => $name || '', error => $name ? 0 : 1,
+  $line_hash->{consensus}{name} = {val => $name || $hescreg_name, error => $name ? 0 : 1,
         error_string => $name ? '' : 'could not find a name that looked like a hPSCreg name in any of the services (hPSCreg, IMS, BioSamples)',
   };
   $line_hash->{consensus}{biosample_id} = {val => '', error => 1,
