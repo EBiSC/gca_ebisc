@@ -25,7 +25,6 @@ my $biosample_lines = ReseqTrack::EBiSC::BioSampleUtils::find_lines();
 my $IMSfiltered->{'cell_line'} = [];
 foreach my $sample (@{$IMS->find_lines(lims_fields => 1)->{'objects'}}){
   if (my $batches = $biosample_lines->{$sample->{name}}{batches}) {
-    $has_batch += 1;
     my ($batch_id) = sort @$batches;
     my $batch = BioSD::fetch_group($batch_id);
     $sample->{batch} = {
