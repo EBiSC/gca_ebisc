@@ -75,11 +75,9 @@ sub subset_lims_fields {
     #TODO if ($$sample{reprogramming_method}{data}{non_integrating_detectable_flag}){$sample_index->{reprogramming_method}{data}{non_integrating_detectable_flag} = $$sample{reprogramming_method}{data}{non_integrating_detectable_flag};}
     #TODO if ($$sample{reprogramming_method}{data}{non_integrating_method}){$sample_index->{reprogramming_method}{data}{non_integrating_method} = $$sample{reprogramming_method}{data}{non_integrating_method};}
     #TODO if ($$sample{reprogramming_method}{data}{non_integrating_detection_notes}){$sample_index->{reprogramming_method}{data}{non_integrating_detection_notes} = $$sample{reprogramming_method}{data}{non_integrating_detection_notes};}
-    #TODO if ($$sample{reprogramming_method}{data}{reprogramming_vector_non_integrating_detection_uploads}){$sample_index->{reprogramming_method}{data}{reprogramming_vector_non_integrating_detection_uploads} = $$sample{reprogramming_method}{data}{reprogramming_vector_non_integrating_detection_uploads};}
     #TODO if ($$sample{reprogramming_method}{data}{integrating_silenced_flag}){$sample_index->{reprogramming_method}{data}{integrating_silenced_flag} = $$sample{reprogramming_method}{data}{integrating_silenced_flag};}
     #TODO if ($$sample{reprogramming_method}{data}{integrating_method}){$sample_index->{reprogramming_method}{data}{integrating_method} = $$sample{reprogramming_method}{data}{integrating_method};}
     #TODO if ($$sample{reprogramming_method}{data}{integrating_silencing_notes}){$sample_index->{reprogramming_method}{data}{integrating_silencing_notes} = $$sample{reprogramming_method}{data}{integrating_silencing_notes};}
-    #TODO if ($$sample{reprogramming_method}{data}{integrating_silencing_uploads}){$sample_index->{reprogramming_method}{data}{integrating_silencing_uploads} = $$sample{reprogramming_method}{data}{integrating_silencing_uploads};}
 
 
     if ($$sample{primary_disease_diagnosed}){$sample_index->{primary_disease_diagnosed} = $$sample{primary_disease_diagnosed};}
