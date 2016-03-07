@@ -28,6 +28,7 @@ foreach my $sample (@{$IMS->find_lines(lims_fields => 1)->{'objects'}}){
     my ($batch_id) = sort @$batches;
     my $batch = BioSD::fetch_group($batch_id);
     $sample->{batch} = {
+      name => 'P001',
       batch_id => $batch_id,
       vial => [map { {vial_id => $_->id, name => $_->property('Sample Name')->values->[0]} } @{$batch->samples}]
     }
