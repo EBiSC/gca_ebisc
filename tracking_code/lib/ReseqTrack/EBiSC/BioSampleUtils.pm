@@ -28,14 +28,16 @@ sub batch_to_linked_line {
   my ($batch) = @_;
   my $link_prop = $batch->property('origin cell line');
   return undef if !$link_prop;
-  return BioSD::fetch_sample($link_prop->values->[0]);
+  my $sample = eval{BioSD::fetch_sample($link_prop->values->[0]);};
+  return $sample;
 };
 
 sub batch_to_linked_donor {
   my ($batch) = @_;
   my $link_prop = $batch->property('origin donor');
   return undef if !$link_prop;
-  return BioSD::fetch_sample($link_prop->values->[0]);
+  my $sample = eval{BioSD::fetch_sample($link_prop->values->[0]);};
+  return $sample;
 };
 
 sub batch_to_derived_from_line {
@@ -44,7 +46,7 @@ sub batch_to_derived_from_line {
   while (1) {
     return undef if !$line;
     return $line if $line->property('Sample Name')->values->[0] !~ /vial *\d+/;
-    ($line) = @{$line->derived_from};
+    ($line) = grep {$_->is_valid} @{$line->derived_from};
   }
 }
 
