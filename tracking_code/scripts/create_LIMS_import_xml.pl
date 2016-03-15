@@ -30,7 +30,7 @@ foreach my $sample (@{$IMS->find_lines(lims_fields => 1)->{'objects'}}){
     $sample->{batch} = {
       name => 'P001',
       batch_id => $batch_id,
-      vial => [map { {vial_id => $_->id, name => $_->property('Sample Name')->values->[0]} } @{$batch->samples}]
+      vial => [map { {vial_id => $_->id, name => $_->property('Sample Name')->values->[0], vial_number => (split(/ /, $_->property('Sample Name')->values->[0]))[-1] }} @{$batch->samples}]
     }
   }
   push($IMSfiltered->{'cell_line'}, $sample);
