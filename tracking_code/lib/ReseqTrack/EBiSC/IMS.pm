@@ -171,6 +171,13 @@ sub subset_lims_fields {
     #TODO if (defined $$sample{genetic_modification_isogenic}{modified_sequence}){$sample_index->{genetic_modification_isogenic}{modified_sequence} = $$sample{genetic_modification_isogenic}{modified_sequence};}
     #TODO if (defined $$sample{genetic_modification_isogenic}{target_locus}){$sample_index->{genetic_modification_isogenic}{target_locus} = $$sample{genetic_modification_isogenic}{target_locus};}
 
+    #TODO ADD BATCH INFORMATION
+    #if (defined $$sample{batches}){
+    #    foreach my $batch $$sample{batches}{
+    #        if ($batch{})
+    #    }
+    #}
+
     push(@filtered, $sample_index);
   }
   return \@filtered;
