@@ -175,8 +175,7 @@ sub subset_lims_fields {
 
         if (defined $$sample{batches}){
           foreach my $batch (@{$sample->{batches}}) {
-            if ($batch->{batch_type} eq 'Unknown'){
-            #TODO if ($batch->{batch_type} eq 'Depositor Expansion'){ #TEST THIS
+            if ($batch->{batch_type} eq 'Depositor Expansion'){
               $sample_index->{batch} = {
               name => $batch->{batch_id},
               batch_id => $batch->{biosamples_id},
