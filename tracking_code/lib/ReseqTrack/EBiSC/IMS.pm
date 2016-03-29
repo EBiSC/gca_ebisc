@@ -8,8 +8,8 @@ use LWP::UserAgent;
 use JSON qw(decode_json);
 use HTTP::Request::Common qw(POST);
 
-has 'base_url' => (is => 'rw', isa => 'Str', default => 'cells.ebisc.org');
 #has 'base_url' => (is => 'rw', isa => 'Str', default => 'cells.ebisc.org');
+has 'base_url' => (is => 'rw', isa => 'Str', default => 'cells-stage.ebisc.org');
 has 'ua' => (is => 'ro', isa => 'LWP::UserAgent', default => sub {return LWP::UserAgent->new;});
 
 has 'user' => (is => 'rw', isa => 'Str');
@@ -171,12 +171,18 @@ sub subset_lims_fields {
     #TODO if (defined $$sample{genetic_modification_isogenic}{modified_sequence}){$sample_index->{genetic_modification_isogenic}{modified_sequence} = $$sample{genetic_modification_isogenic}{modified_sequence};}
     #TODO if (defined $$sample{genetic_modification_isogenic}{target_locus}){$sample_index->{genetic_modification_isogenic}{target_locus} = $$sample{genetic_modification_isogenic}{target_locus};}
 
-    #TODO ADD BATCH INFORMATION
-    #if (defined $$sample{batches}){
-    #    foreach my $batch $$sample{batches}{
-    #        if ($batch{})
-    #    }
-    #}
+    if (defined $$sample{batches}){
+        foreach my $batch (@{$sample->{batches}}) {
+            if ($batch->{batch_type} eq 'Unknown'){
+            #TODO if ($batch->{batch_type} eq 'Depositor Expansion'){ #TEST THIS
+                $sample_index->{batch} = {
+                    name => $batch->{batch_id},
+                    batch_id => $batch->{biosamples_id},
+                    vial => [map { {vial_id => $_->{biosamples_id}, name => $_->{name}, vial_number => $_->{number} }} @{$batch->{vials}}]
+                }
+            }
+        }
+    }
 
     push(@filtered, $sample_index);
   }
