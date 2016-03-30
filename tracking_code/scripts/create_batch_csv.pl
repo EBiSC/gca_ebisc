@@ -27,7 +27,7 @@ foreach my $sample (@{$IMS->find_lines->{'objects'}}){
     foreach my $batch (@{$sample->{batches}}){
       my $csvbatch = {};
       $csvbatch = {
-      depositors_name => join('; ', @{$sample->{alternative_names}}) ? join('; ', @{$sample->{alternative_names}}) :  $sample->{name}, #TODO Get correct delimter from Maja
+      depositors_name => join('; ', @{$sample->{alternative_names}}) ? join('; ', @{$sample->{alternative_names}}) :  $sample->{name},
       hescreg_name => $sample->{name},
       ecacc_number => $sample->{ecacc_cat_no},
       batch_name => $batch->{batch_id},
