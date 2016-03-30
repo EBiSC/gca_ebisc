@@ -99,6 +99,11 @@ foreach my $line (@{$IMS->find_lines->{objects}}) {
     alternate_names => $line->{alternate_names},
     biosample_id => $line->{biosamples_id},
     donor_biosample_id => $line->{donor}{biosamples_id},
+    flag_go_live => $line->{flag_go_live},
+    availability => $line->{availability},
+    cellline_certificate_of_analysis  => $line->{cellline_certificate_of_analysis}{certificate_of_analysis_flag},
+    cell_line_information_packs => $line->{cell_line_information_packs},
+    batches => $line->{batches}
   };
 
   if ($biosample_id && !${$line_output}->{biosample} && $discovered_no_biosample{$line->{name}}) {
@@ -108,6 +113,7 @@ foreach my $line (@{$IMS->find_lines->{objects}}) {
   }
 }
 
+#TODO Rework to look at XML from LIMS
 foreach my $batch ( @{ReseqTrack::EBiSC::LimsUtils::find_batches()}) {
   my $line_output = ReseqTrack::EBiSC::LimsUtils::find_correct_line_hash($batch, \%discovered)
                  || ReseqTrack::EBiSC::LimsUtils::find_correct_line_hash($batch, \%discovered_no_biosample);
@@ -249,6 +255,7 @@ foreach my $line_hash (@{$output{lines}}) {
   $line_hash->{LIMS}{missing_data}{error_string} = $line_hash->{LIMS}{missing_data}{error} ? 'One or more batches in "LIMS" is missing some data' : '';
   $line_hash->{LIMS}{name_batch_id_consistent}{error_string} = $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'One or more batches in "LIMS" has an inconsistency between name and biosample id' : '';
 
+
   my %tests = (
     'IMS exports the cell line' => $line_hash->{IMS}{exported}{error} ? 'fail' : 'pass',
     'hPSCreg exports the cell line' => $line_hash->{hESCreg}{exported}{error} ? 'fail' : 'pass',
@@ -291,7 +298,15 @@ foreach my $line_hash (@{$output{lines}}) {
                                   : $line_hash->{LIMS}{missing_data}{error} ? 'fail' : 'pass',
     '"LIMS" batch id and cell line name are consistent with BioSamples' => !$line_hash->{LIMS}{batches}[0] ? 'cannot test' 
                                   : $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'fail' : 'pass',
+    'Line marked go live but no CLIP loaded' => !$line_hash->{IMS}{flag_go_live} ? 'cannot test' : !$line_hash->{IMS}{cell_line_information_packs} ? 'fail' : 'pass',
+    'Line marked go live but no central facility batch data found' => !$line_hash->{IMS}{batches} ? 'fail' : 'pass',
+    #$line_hash->{IMS}{flag_go_live} ? 'cannot test' : 
+    #'Line marked go live but no cofa for batches'
+    #'Line has no errors but is not visible in public IMS'
   );
+  
+  print "\n", $line_hash->{IMS}{flag_go_live}, "\n";
+  print $tests{'Line marked go live but no central facility batch data found'}, "\n";
 
   my $ims_name_error = ! $line_hash->{IMS}{name} ? 'IMS does not export any name for this cell line'
                         : $line_hash->{hESCreg}{name} && $line_hash->{IMS}{name} ne $line_hash->{hESCreg}{name} ? 'IMS name does not match the name in hPSCreg'
@@ -348,4 +363,5 @@ $output{lines} = [sort {$a->{consensus}{name}{error} <=> $b->{consensus}{name}{e
 $output{count} = scalar @{$output{lines}};
 $output{date} = scalar localtime();
 
-print JSON::encode_json(\%output);
+#TODO reactivate when done
+#print JSON::encode_json(\%output);
