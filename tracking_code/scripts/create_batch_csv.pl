@@ -40,7 +40,7 @@ foreach my $sample (@{$IMS->find_lines->{'objects'}}){
 }
 foreach my $batch (@batches){
   #TODO Use ebisc filepath
-  #my $outname = "/nfs/production/reseq-info/drop/ebisc-data/outgoing/central_facility_expansion_batches/".$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
+  #my $outname = "/nfs/production/reseq-info/drop/ebisc-data/outgoing/batch_csv/".$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
   my $outname = "/homes/peter/ebisc/ebisc_batches/".$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
   open(my $fh, '>', $outname) or die "Could not open file '$outname' $!";
   print $fh "Depositors Cell Line Name,hESCreg  Name,ECACC Cat no,Batch,Biosamples Batch ID,Vial number,Biosamples Vial ID\n";

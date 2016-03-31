@@ -8,6 +8,7 @@ use LWP::UserAgent;
 use JSON qw(decode_json);
 use HTTP::Request::Common qw(POST);
 
+#TODO Switch back to production server
 #has 'base_url' => (is => 'rw', isa => 'Str', default => 'cells.ebisc.org');
 has 'base_url' => (is => 'rw', isa => 'Str', default => 'cells-stage.ebisc.org');
 has 'ua' => (is => 'ro', isa => 'LWP::UserAgent', default => sub {return LWP::UserAgent->new;});
