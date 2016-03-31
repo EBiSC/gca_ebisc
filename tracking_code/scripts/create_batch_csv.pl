@@ -5,14 +5,13 @@ use warnings;
 use Getopt::Long;
 use JSON qw(decode_json);
 use ReseqTrack::EBiSC::IMS;
-use ReseqTrack::EBiSC::XMLUtils qw(dump_xml);
-use ReseqTrack::EBiSC::BioSampleUtils;
-use Data::Dumper;
 
 my ($IMS_user, $IMS_pass);
+my $csvoutfolder = "/nfs/production/reseq-info/drop/ebisc-data/outgoing/batch_csv/";
 
 GetOptions("ims_user=s" => \$IMS_user,
     "ims_pass=s" => \$IMS_pass,
+    "csvoutfolder=s" => \$csvoutfolder,
 );
 die "missing credentials" if !$IMS_user || !$IMS_pass;
 
@@ -39,10 +38,11 @@ foreach my $sample (@{$IMS->find_lines->{'objects'}}){
   }
 }
 foreach my $batch (@batches){
-  my $outname = "/nfs/production/reseq-info/drop/ebisc-data/outgoing/batch_csv/".$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
+  my $outname = $csvoutfolder.$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
   open(my $fh, '>', $outname) or die "Could not open file '$outname' $!";
   print $fh "Depositors Cell Line Name,hESCreg  Name,ECACC Cat no,Batch,Biosamples Batch ID,Vial number,Biosamples Vial ID\n";
   foreach my $vial (@{$batch->{vial}}) {
     print $fh join(',', map {$_ // ''} $$batch{depositors_name}, $$batch{hescreg_name}, $$batch{ecacc_number}, $$batch{batch_name}, $$batch{batch_id}, $$vial{vial_number}, $$vial{vial_id}), "\n";
   }
+  close($fh);
 }
