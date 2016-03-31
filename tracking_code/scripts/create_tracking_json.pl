@@ -299,13 +299,15 @@ foreach my $line_hash (@{$output{lines}}) {
     '"LIMS" batch id and cell line name are consistent with BioSamples' => !$line_hash->{LIMS}{batches}[0] ? 'cannot test' 
                                   : $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'fail' : 'pass',
     'Line marked go live but no CLIP loaded' => !$line_hash->{IMS}{flag_go_live} ? 'cannot test' : !$line_hash->{IMS}{cell_line_information_packs} ? 'fail' : 'pass',
-    'Line marked go live but no central facility batch data found' => !$line_hash->{IMS}{batches} ? 'fail' : 'pass', #TODO this needs to be looking at just central facility batches so need to process above to create a flag to test here, also need to ignore expand to order batches?
+    'Line marked go live but no central facility batch data found' => !$line_hash->{IMS}{batches} ? 'fail' : 'pass', 
     #$line_hash->{IMS}{flag_go_live} ? 'cannot test' : 
     #'Line marked go live but no cofa for batches'
     #'Line marked go live but is not visible in public IMS' #TODO what flag does IMS API use for this
   );
   
-  print "\n", $line_hash->{IMS}{flag_go_live}, "\n";
+  
+  print "\n", $line_hash->{IMS}{name}, "\n";
+  print $line_hash->{IMS}{flag_go_live}, "\n";
   print $tests{'Line marked go live but no central facility batch data found'}, "\n";
 
   my $ims_name_error = ! $line_hash->{IMS}{name} ? 'IMS does not export any name for this cell line'
