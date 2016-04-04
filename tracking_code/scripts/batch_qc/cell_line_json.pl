@@ -157,7 +157,7 @@ foreach my $incoming_file ( grep {$_ =~ m{/incoming/wp5/certificate_of_analysis/
   my $cache_file = $cache_files{$incoming_file}->[5];
   my ($cell_line, $batch, undef, $version) = split(/\./, $filename);
   $version =~ s/[^\d]//g;
-  next FILE if $coas{$cell_line}{$batch} && $coas{$cell_line}{$batch}{$version} > $version;
+  next FILE if $coas{$cell_line}{$batch} && $coas{$cell_line}{$batch}{version} > $version;
   $coas{$cell_line}{$batch} = {
     file => $cache_file,
     md5 => $cache_md5s{$cache_file},
