@@ -300,14 +300,16 @@ foreach my $line_hash (@{$output{lines}}) {
                                   : $line_hash->{LIMS}{name_batch_id_consistent}{error} ? 'fail' : 'pass',
     'Line marked go live but no CLIP loaded' => !$line_hash->{IMS}{flag_go_live} ? 'cannot test' : !$line_hash->{IMS}{cell_line_information_packs} ? 'fail' : 'pass',
     'Line marked go live but no batch data found' => !$line_hash->{IMS}{flag_go_live} ? 'cannot test' : !$line_hash->{IMS}{batches}[0] ? 'fail' : 'pass',
-    #'Line marked go live but no cofa for batches'
-    #'Line marked go live but is not visible in public IMS' #TODO what flag does IMS API use for this
+    'Line marked go live but is not visible in public IMS' => !$line_hash->{IMS}{flag_go_live} ? 'cannot test' : $line_hash->{IMS}{availability} eq 'Stocked by ECACC' || $line_hash->{IMS}{availability} eq 'Expand to order' ? 'pass' : 'fail', #FIXME THIS IS NOT TESTING WHETHER ITS VISIBLE, CHECK WITH MAJA FOR LOGIC
+    #'Line marked go live but no cofa for batches' => !$line_hash->{IMS}{flag_go_live} ? 'cannot test' : !$line_hash->{IMS}{batches}[0] ? 'cannot test' :
+    #Stocked by ECACC
   );
   
   
   print "\n", $line_hash->{IMS}{name}, "\n";
   print $line_hash->{IMS}{flag_go_live}, "\n";
-  print $tests{'Line marked go live but no batch data found'}, "\n";
+  print $line_hash->{IMS}{availability}, "\n";
+  print $tests{'Line marked go live but is not visible in public IMS'}, "\n";
 
   my $ims_name_error = ! $line_hash->{IMS}{name} ? 'IMS does not export any name for this cell line'
                         : $line_hash->{hESCreg}{name} && $line_hash->{IMS}{name} ne $line_hash->{hESCreg}{name} ? 'IMS name does not match the name in hPSCreg'
