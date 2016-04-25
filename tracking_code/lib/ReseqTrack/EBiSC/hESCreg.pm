@@ -363,7 +363,7 @@ my $blank_post_json = '
   "hips_consent_permits_delivery_of_information_and_data_flag": "",
   "hips_consent_permits_testing_microbiological_agents_pathogens_flag": "",
   "hips_consent_permits_genetic_testing_flag": "",
-  "hips_consent_permits_access_medical_records_flag": ""
+  "hips_consent_permits_access_medical_records_flag": "",
   "hips_ethics_review_panel_opinion_relation_consent_form_flag": ""
 }
 ';
