@@ -348,7 +348,6 @@ my $blank_post_json = '
   "hips_approval_auth_name": "",
   "hips_approval_number": "",
   "hips_ethics_review_panel_opinion_project_proposed_use_flag": "",
-  "hips_ethics_review_panel_opinion_relation_consent_form_flag": "",
   "hips_third_party_obligations_flag": "",
   "hips_holding_original_donor_consent_copy_of_existing_flag": "",
   "hips_holding_original_donor_consent_flag": "",
