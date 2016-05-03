@@ -41,7 +41,7 @@ foreach my $line_name (@{$hESCreg->find_lines()}) {
   my $biosample_id = $line->{biosamples_id} && $line->{biosamples_id} =~ /^SAM.*/ ? $& : undef;
   if (!$biosample_id) {
     NAME:
-    foreach my $possible_name ($line_name, @{$line->{alternate_name}}) {
+    foreach my $possible_name (grep {$_} $line_name, @{$line->{alternate_name}}) {
       my ($biosample) = grep {$_ && $_->property('Sample Name')->values->[0] eq $possible_name} @{BioSD::search_for_samples($possible_name)};
       next NAME if !$biosample;
       $biosample_id = $biosample->id;
@@ -65,7 +65,7 @@ foreach my $line_name (@{$hESCreg->find_lines()}) {
 
   if ($biosample_id && !${$line_output}->{biosample}) {
     ALT:
-    foreach my $name ($line->{name}, @{$line->{alternate_name}}) {
+    foreach my $name (grep {$_} $line->{name}, @{$line->{alternate_name}}) {
       if ($discovered_no_biosample{$name}) {
           ${$line_output}->{biosample} = $discovered_no_biosample{$name}{biosample};
           delete $discovered_no_biosample{$name};
@@ -85,7 +85,7 @@ foreach my $line (@{$IMS->find_lines->{objects}}) {
   my $biosample_id = $line->{biosamples_id} && $line->{biosamples_id} =~ /^SAM.*/ ? $& : undef;
   if (!$biosample_id) {
     NAME:
-    foreach my $possible_name ($line->{name}, @{$line->{alternate_names}}) {
+    foreach my $possible_name (grep {$_} $line->{name}, @{$line->{alternate_names}}) {
       my ($biosample) = grep {$_ && $_->property('Sample Name')->values->[0] eq $possible_name} @{BioSD::search_for_samples($possible_name)};
       next NAME if !$biosample;
       $biosample_id = $biosample->id;
