@@ -4,12 +4,14 @@ use warnings;
 
 use Getopt::Long;
 use ReseqTrack::EBiSC::hESCreg;
+use JSON qw(encode_json);
 use Data::Dumper;
 
-my ($hESCreg_user, $hESCreg_pass);
+my ($hESCreg_user, $hESCreg_pass, $jsonoutfile);
 
 GetOptions("user=s" => \$hESCreg_user,
     "pass=s" => \$hESCreg_pass,
+    "jsonoutfile=s" => \$jsonoutfile,
 );
 die "missing credentials" if !$hESCreg_user || !$hESCreg_pass;
 
@@ -25,4 +27,13 @@ foreach my $line_name (@{$hESCreg->find_lines()}) {
   next LINE if !$line || $@;
   $output{$line_name} = $line;
 }
-print Dumper \%output;
+
+if ($jsonoutfile){
+  my $json_out = encode_json(\%output);
+  open(my $fh, '>', $jsonoutfile);
+  print $fh $json_out; 
+  close $fh;
+}else{
+  print Dumper \%output;
+}
+
