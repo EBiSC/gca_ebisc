@@ -10,9 +10,17 @@ use Test::Deep::NoTest;
 use POSIX qw(strftime);
 
 my $date = strftime('%Y%m%d%H%M%S', localtime);
+my $year = strftime('%Y', localtime);
+
 
 my ($IMS_user, $IMS_pass);
-my $xmloutfile = '/nfs/production/reseq-info/drop/ebisc-data/outgoing/cellline_xml/cellline'.$date.'.xml';
+my $full_path = '/nfs/production/reseq-info/drop/ebisc-data/outgoing/cellline_xml/'.$year;
+my $xmloutfile = $full_path.'/cellline'.$date.'.xml';
+
+if (!-d $full_path) {
+  my @args = ("mkdir", "$full_path");
+  system(@args) == 0 or die "system @args failed: $?";
+}
 
 my $cellsfile = '/nfs/production/reseq-info/work/ebiscdcc/lims_celline_update_check/validated_celllines_store.json';
 

@@ -38,7 +38,13 @@ foreach my $sample (@{$IMS->find_lines->{'objects'}}){
   }
 }
 foreach my $batch (@batches){
-  my $outname = $csvoutfolder.$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
+  my $depositor_code = (split /i/, $$batch{hescreg_name})[0];
+  my $full_path = $csvoutfolder.$depositor_code;
+  if (!-d $full_path) {
+    my @args = ("mkdir", "$full_path");
+    system(@args) == 0 or die "system @args failed: $?";
+  }
+  my $outname = $full_path.'/'.$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
   open(my $fh, '>', $outname) or die "Could not open file '$outname' $!";
   print $fh "Depositors Cell Line Name,hESCreg  Name,ECACC Cat no,Batch,Biosamples Batch ID,Vial number,Biosamples Vial ID\n";
   foreach my $vial (@{$batch->{vial}}) {
