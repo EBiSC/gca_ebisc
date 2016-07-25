@@ -112,6 +112,7 @@ sub subset_lims_fields {
 
         #Uncomment and test when implemented at hPSCreg
         #Charachterisation fields
+        #TODO must be concaternated into string to match LIMS spec before marjer exoression status is made live
         #TODO if (defined $$sample{characterization_marker_expression}{marker_expression_flag}){$sample_index->{characterization_marker_expression}{marker_expression_flag} = $$sample{characterization_marker_expression}{marker_expression_flag};}
         #TODO if (defined $$sample{characterization_marker_expression}{methods}{method}){$sample_index->{characterization_marker_expression}{methods}{method} = $$sample{characterization_marker_expression}{methods}{method};}
         #TODO if (defined $$sample{characterization_marker_expression}{methods}{markers}{marker}){$sample_index->{characterization_marker_expression}{methods}{markers}{marker} = $$sample{characterization_marker_expression}{methods}{markers}{marker};}
