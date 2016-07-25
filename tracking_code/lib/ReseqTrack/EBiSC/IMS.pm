@@ -63,7 +63,7 @@ sub subset_lims_fields {
         if (defined $$sample{donor}{biosamples_id}){$sample_index->{donor}{biosamples_id} = $$sample{donor}{biosamples_id};}
         if (defined $$sample{donor}{internal_donor_ids}){$sample_index->{donor}{internal_donor_ids} = $$sample{donor}{internal_donor_ids};}
         if (defined $$sample{donor}{phenotypes}){$sample_index->{donor}{phenotypes} = $$sample{donor}{phenotypes};}
-        if (defined $$sample{donor}{karyotype}){$sample_index->{donor}{karyotype} = $$sample{donor}{karyotype};}  #TODO No data yet needs to be tested when data is availible
+        if (defined $$sample{donor}{karyotype}){$sample_index->{donor}{karyotype} = $$sample{donor}{karyotype};}
 
         if (defined $$sample{cellline_karyotype}{karyotype}){$sample_index->{cellline_karyotype} = $$sample{cellline_karyotype}{karyotype};}
 
@@ -74,17 +74,17 @@ sub subset_lims_fields {
         if (defined $$sample{reprogramming_method}{data}{transposon}){$sample_index->{reprogramming_method}{data}{transposon} = $$sample{reprogramming_method}{data}{transposon};}
         if (defined $$sample{reprogramming_method}{data}{non_integrating_vector_gene_list}){$sample_index->{reprogramming_method}{data}{non_integrating_vector_gene_list} = $$sample{reprogramming_method}{data}{non_integrating_vector_gene_list};}
         if (defined $$sample{reprogramming_method}{data}{non_integrating_vector_detectable}){$sample_index->{reprogramming_method}{data}{non_integrating_vector_detectable} = $$sample{reprogramming_method}{data}{non_integrating_vector_detectable};}
-        if (defined $$sample{reprogramming_method}{data}{non_integrating_vector_methods}){$sample_index->{reprogramming_method}{data}{non_integrating_vector_method} = $$sample{reprogramming_method}{data}{non_integrating_vector_method};}  #TODO No data yet needs to be tested when data is availible
-        if (defined $$sample{reprogramming_method}{data}{non_integrating_vector_detection_notes}){$sample_index->{reprogramming_method}{data}{non_integrating_vector_detection_notes} = $$sample{reprogramming_method}{data}{non_integrating_vector_detection_notes};}  #TODO No data yet needs to be tested when data is availible
+        if (defined $$sample{reprogramming_method}{data}{non_integrating_vector_methods}){$sample_index->{reprogramming_method}{data}{non_integrating_vector_method} = $$sample{reprogramming_method}{data}{non_integrating_vector_method};}
+        if (defined $$sample{reprogramming_method}{data}{non_integrating_vector_detection_notes}){$sample_index->{reprogramming_method}{data}{non_integrating_vector_detection_notes} = $$sample{reprogramming_method}{data}{non_integrating_vector_detection_notes};}
         if (defined $$sample{reprogramming_method}{data}{integrating_vector_gene_list}){$sample_index->{reprogramming_method}{data}{integrating_vector_gene_list} = $$sample{reprogramming_method}{data}{integrating_vector_gene_list};}
         if (defined $$sample{reprogramming_method}{data}{integrating_vector_silenced}){$sample_index->{reprogramming_method}{data}{integrating_vector_silenced} = $$sample{reprogramming_method}{data}{integrating_vector_silenced};}
-        if (defined $$sample{reprogramming_method}{data}{integrating_vector_methods}){$sample_index->{reprogramming_method}{data}{integrating_vector_methods} = $$sample{reprogramming_method}{data}{integrating_vector_methods};}  #TODO No data yet needs to be tested when data is availible
-        if (defined $$sample{reprogramming_method}{data}{integrating_silencing_notes}){$sample_index->{reprogramming_method}{data}{integrating_vector_silencing_notes} = $$sample{reprogramming_method}{data}{integrating_vector_silencing_notes};}  #TODO No data yet needs to be tested when data is availible
+        if (defined $$sample{reprogramming_method}{data}{integrating_vector_methods}){$sample_index->{reprogramming_method}{data}{integrating_vector_methods} = $$sample{reprogramming_method}{data}{integrating_vector_methods};}
+        if (defined $$sample{reprogramming_method}{data}{integrating_silencing_notes}){$sample_index->{reprogramming_method}{data}{integrating_vector_silencing_notes} = $$sample{reprogramming_method}{data}{integrating_vector_silencing_notes};}
         
         if (defined $$sample{primary_disease_diagnosed}){$sample_index->{disease_diagnosed} = $$sample{primary_disease_diagnosed};}
-        #FIXME when availible if (defined $$sample{disease_diagnosed}){$sample_index->{disease_diagnosed} = $$sample{disease_diagnosed};}
+        #TODO when availible if (defined $$sample{disease_diagnosed}){$sample_index->{disease_diagnosed} = $$sample{disease_diagnosed};}
         if (defined $$sample{primary_disease}{name}){$sample_index->{disease_names} = [$$sample{primary_disease}{name}];}
-        #FIXME when availible if (defined $$sample{disease_names}){$sample_index->{disease_names} = $$sample{disease_names};}
+        #TODO when availible if (defined $$sample{disease_names}){$sample_index->{disease_names} = $$sample{disease_names};}
         if (defined $$sample{disease_associated_phenotypes}){$sample_index->{disease_associated_phenotypes} = $$sample{disease_associated_phenotypes};}
         
         if (defined $$sample{depositor_cellline_culture_conditions}{surface_coating}){$sample_index->{depositor_cellline_culture_conditions}{surface_coating} = $$sample{depositor_cellline_culture_conditions}{surface_coating};}
@@ -99,8 +99,8 @@ sub subset_lims_fields {
         if (defined $$sample{depositor_cellline_culture_conditions}{rock_inhibitor_used_at_cryo}){$sample_index->{depositor_cellline_culture_conditions}{rock_inhibitor_used_at_cryo} = $$sample{depositor_cellline_culture_conditions}{rock_inhibitor_used_at_cryo};}
         if (defined $$sample{depositor_cellline_culture_conditions}{rock_inhibitor_used_at_thaw}){$sample_index->{depositor_cellline_culture_conditions}{rock_inhibitor_used_at_thaw} = $$sample{depositor_cellline_culture_conditions}{rock_inhibitor_used_at_thaw};}
 
-        if (defined $$sample{cellline_disease_associated_genotype}{carries_disease_phenotype_associated_variants_flag}){$sample_index->{cellline_disease_associated_genotype}{carries_disease_phenotype_associated_variants_flag} = $$sample{cellline_disease_associated_genotype}{carries_disease_phenotype_associated_variants_flag};}  #TODO No data yet needs to be tested when data is availible
-        if (defined $$sample{cellline_disease_associated_genotype}{variant_of_interest_flag}){$sample_index->{cellline_disease_associated_genotype}{variant_of_interest_flag} = $$sample{cellline_disease_associated_genotype}{variant_of_interest_flag};}  #TODO No data yet needs to be tested when data is availible
+        if (defined $$sample{cellline_disease_associated_genotype}{carries_disease_phenotype_associated_variants_flag}){$sample_index->{cellline_disease_associated_genotype}{carries_disease_phenotype_associated_variants_flag} = $$sample{cellline_disease_associated_genotype}{carries_disease_phenotype_associated_variants_flag};}
+        if (defined $$sample{cellline_disease_associated_genotype}{variant_of_interest_flag}){$sample_index->{cellline_disease_associated_genotype}{variant_of_interest_flag} = $$sample{cellline_disease_associated_genotype}{variant_of_interest_flag};}
 
         if (defined $$sample{cellline_certificate_of_analysis}{certificate_of_analysis_flag}){$sample_index->{cellline_certificate_of_analysis}{certificate_of_analysis_flag} = $$sample{cellline_certificate_of_analysis}{certificate_of_analysis_flag};}
 
@@ -110,15 +110,17 @@ sub subset_lims_fields {
         if (defined $$sample{virology_screening}{hepatitis_b}){$sample_index->{virology_screening}{hepatitis_b} = $$sample{virology_screening}{hepatitis_b};}
         if (defined $$sample{virology_screening}{hepatitis_c}){$sample_index->{virology_screening}{hepatitis_c} = $$sample{virology_screening}{hepatitis_c};}
 
-        #TODO Uncomment and test when implemented at hPSCreg
-        #TODO Charachterisation fields
+        #Uncomment and test when implemented at hPSCreg
+        #Charachterisation fields
         #TODO if (defined $$sample{characterization_marker_expression}{marker_expression_flag}){$sample_index->{characterization_marker_expression}{marker_expression_flag} = $$sample{characterization_marker_expression}{marker_expression_flag};}
         #TODO if (defined $$sample{characterization_marker_expression}{methods}{method}){$sample_index->{characterization_marker_expression}{methods}{method} = $$sample{characterization_marker_expression}{methods}{method};}
         #TODO if (defined $$sample{characterization_marker_expression}{methods}{markers}{marker}){$sample_index->{characterization_marker_expression}{methods}{markers}{marker} = $$sample{characterization_marker_expression}{methods}{markers}{marker};}
         #TODO if (defined $$sample{characterization_marker_expression}{methods}{markers}{expressed}){$sample_index->{characterization_marker_expression}{methods}{markers}{expressed} = $$sample{characterization_marker_expression}{methods}{markers}{expressed};}
-        #TODO if (defined $$sample{characterization_pluritest}{pluritest_flag}){$sample_index->{characterization_pluritest}{pluritest_flag} = $$sample{characterization_pluritest}{pluritest_flag};}
-        #TODO if (defined $$sample{characterization_pluritest}{pluripotency_score}){$sample_index->{characterization_pluritest}{pluripotency_score} = $$sample{characterization_pluritest}{pluripotency_score};}
-        #TODO if (defined $$sample{characterization_pluritest}{novelty_score}){$sample_index->{characterization_pluritest}{novelty_score} = $$sample{characterization_pluritest}{novelty_score};}
+        
+        if (defined $$sample{characterization_pluritest}{pluritest_flag}){$sample_index->{characterization_pluritest}{pluritest_flag} = $$sample{characterization_pluritest}{pluritest_flag};}
+        if (defined $$sample{characterization_pluritest}{pluripotency_score}){$sample_index->{characterization_pluritest}{pluripotency_score} = $$sample{characterization_pluritest}{pluripotency_score};}
+        if (defined $$sample{characterization_pluritest}{novelty_score}){$sample_index->{characterization_pluritest}{novelty_score} = $$sample{characterization_pluritest}{novelty_score};}
+        
         #TODO if (defined $$sample{characterization_epipluriscore}{epipluriscore_flag}){$sample_index->{characterization_epipluriscore}{epipluriscore_flag} = $$sample{characterization_epipluriscore}{epipluriscore_flag};}
         #TODO if (defined $$sample{characterization_epipluriscore}{score}){$sample_index->{characterization_epipluriscore}{score} = $$sample{characterization_epipluriscore}{score};}
         #TODO if (defined $$sample{characterization_epipluriscore}{marker_mcpg}){$sample_index->{characterization_epipluriscore}{marker_mcpg} = $$sample{characterization_epipluriscore}{marker_mcpg};}
@@ -161,19 +163,20 @@ sub subset_lims_fields {
         #TODO if (defined $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{other}){$sample_index->{characterization_differentiation_potency_ectoderm}{cell_types}{other} = $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{other};}
         #TODO if (defined $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{markers}){$sample_index->{characterization_differentiation_potency_ectoderm}{cell_types}{markers} = $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{markers};}
 
-        #TODO Genetic modification fields
-        #TODO if (defined $$sample{genetic_modification}{genetic_modification_flag}){$sample_index->{genetic_modification}{genetic_modification_flag} = $$sample{genetic_modification}{genetic_modification_flag};}
-        #TODO if (defined $$sample{genetic_modification}{types}){$sample_index->{genetic_modification}{types} = $$sample{genetic_modification}{types};}
-        #TODO if (defined $$sample{genetic_modification_transgene_expression}{delivery_method}){$sample_index->{genetic_modification_transgene_expression}{delivery_method} = $$sample{genetic_modification_transgene_expression}{delivery_method};}
-        #TODO if (defined $$sample{genetic_modification_transgene_expression}{genes}){$sample_index->{genetic_modification_transgene_expression}{genes} = $$sample{genetic_modification_transgene_expression}{genes};}
-        #TODO if (defined $$sample{genetic_modification_gene_knock_out}{delivery_method}){$sample_index->{genetic_modification_gene_knock_out}{delivery_method} = $$sample{genetic_modification_gene_knock_out}{delivery_method};}
-        #TODO if (defined $$sample{genetic_modification_gene_knock_out}{target_genes}){$sample_index->{genetic_modification_gene_knock_out}{target_genes} = $$sample{genetic_modification_gene_knock_out}{target_genes};}
-        #TODO if (defined $$sample{genetic_modification_gene_knock_in}{delivery_method}){$sample_index->{genetic_modification_gene_knock_in}{delivery_method} = $$sample{genetic_modification_gene_knock_in}{delivery_method};}
-        #TODO if (defined $$sample{genetic_modification_gene_knock_in}{target_genes}){$sample_index->{genetic_modification_gene_knock_in}{target_genes} = $$sample{genetic_modification_gene_knock_in}{target_genes};}
-        #TODO if (defined $$sample{genetic_modification_gene_knock_in}{transgenes}){$sample_index->{genetic_modification_gene_knock_in}{transgenes} = $$sample{genetic_modification_gene_knock_in}{transgenes};}
-        #TODO if (defined $$sample{genetic_modification_isogenic}{change_type}){$sample_index->{genetic_modification_isogenic}{change_type} = $$sample{genetic_modification_isogenic}{change_type};}
-        #TODO if (defined $$sample{genetic_modification_isogenic}{modified_sequence}){$sample_index->{genetic_modification_isogenic}{modified_sequence} = $$sample{genetic_modification_isogenic}{modified_sequence};}
-        #TODO if (defined $$sample{genetic_modification_isogenic}{target_locus}){$sample_index->{genetic_modification_isogenic}{target_locus} = $$sample{genetic_modification_isogenic}{target_locus};}
+        if (defined $$sample{genetic_modification}{genetic_modification_flag}){$sample_index->{genetic_modification}{genetic_modification_flag} = $$sample{genetic_modification}{genetic_modification_flag};}
+        if (defined $$sample{genetic_modification}{types}){$sample_index->{genetic_modification}{types} = $$sample{genetic_modification}{types};}
+        
+        if (defined $$sample{genetic_modification_transgene_expression}{delivery_method}){$sample_index->{genetic_modification_transgene_expression}{delivery_method} = $$sample{genetic_modification_transgene_expression}{delivery_method};}
+        if (defined $$sample{genetic_modification_transgene_expression}{genes}){$sample_index->{genetic_modification_transgene_expression}{genes} = $$sample{genetic_modification_transgene_expression}{genes};}
+        
+        if (defined $$sample{genetic_modification_gene_knock_out}{delivery_method}){$sample_index->{genetic_modification_gene_knock_out}{delivery_method} = $$sample{genetic_modification_gene_knock_out}{delivery_method};}
+        if (defined $$sample{genetic_modification_gene_knock_out}{target_genes}){$sample_index->{genetic_modification_gene_knock_out}{target_genes} = $$sample{genetic_modification_gene_knock_out}{target_genes};}
+        if (defined $$sample{genetic_modification_gene_knock_in}{delivery_method}){$sample_index->{genetic_modification_gene_knock_in}{delivery_method} = $$sample{genetic_modification_gene_knock_in}{delivery_method};}
+        if (defined $$sample{genetic_modification_gene_knock_in}{target_genes}){$sample_index->{genetic_modification_gene_knock_in}{target_genes} = $$sample{genetic_modification_gene_knock_in}{target_genes};}
+        if (defined $$sample{genetic_modification_gene_knock_in}{transgenes}){$sample_index->{genetic_modification_gene_knock_in}{transgenes} = $$sample{genetic_modification_gene_knock_in}{transgenes};}
+        if (defined $$sample{genetic_modification_isogenic}{change_type}){$sample_index->{genetic_modification_isogenic}{change_type} = $$sample{genetic_modification_isogenic}{change_type};}
+        if (defined $$sample{genetic_modification_isogenic}{modified_sequence}){$sample_index->{genetic_modification_isogenic}{modified_sequence} = $$sample{genetic_modification_isogenic}{modified_sequence};}
+        if (defined $$sample{genetic_modification_isogenic}{target_locus}){$sample_index->{genetic_modification_isogenic}{target_locus} = $$sample{genetic_modification_isogenic}{target_locus};}
 
         if (defined $$sample{batches}){
           foreach my $batch (@{$sample->{batches}}) {
