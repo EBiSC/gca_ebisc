@@ -18,7 +18,7 @@ has 'pass' => (is => 'rw', isa => 'Str');
 sub BUILD {
   my ($self) = @_;
   $self->ua->default_header(Authorization => sprintf('ApiKey %s:%s', $self->user, $self->pass));
-  $self->ua->timeout(5);
+  $self->ua->timeout(60);
 }
 
 sub find_lines {
