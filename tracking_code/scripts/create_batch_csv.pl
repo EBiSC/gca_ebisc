@@ -46,7 +46,7 @@ foreach my $batch (@batches){
   }
   my $outname = $full_path.'/'.$$batch{hescreg_name}."_".$$batch{batch_name}.".csv";
   open(my $fh, '>', $outname) or die "Could not open file '$outname' $!";
-  print $fh "Depositors Cell Line Name,hESCreg  Name,ECACC Cat no,Batch,Biosamples Batch ID,Vial number,Biosamples Vial ID\n";
+  print $fh "Cell line alternative names,Cell line name,ECACC Cat. no.,Batch ID,Batch Biosample ID,Vial number,Vial Biosample ID\n";
   foreach my $vial (@{$batch->{vial}}) {
     print $fh join(',', map {$_ // ''} $$batch{depositors_name}, $$batch{hescreg_name}, $$batch{ecacc_number}, $$batch{batch_name}, $$batch{batch_id}, $$vial{vial_number}, $$vial{vial_id}), "\n";
   }
