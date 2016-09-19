@@ -14,7 +14,7 @@ has 'ua' => (is => 'ro', isa => 'LWP::UserAgent', default => sub {return LWP::Us
 has 'realm' => (is => 'rw', isa => 'Str', default => 'hPSCreg API');
 has 'user' => (is => 'rw', isa => 'Str');
 has 'pass' => (is => 'rw', isa => 'Str');
-has 'port' => (is => 'rw', isa => 'Int', default => 80);
+has 'port' => (is => 'rw', isa => 'Int', default => 443);
 
 has 'base_url' => (is => 'ro', isa => 'Str', builder => '_build_base_url', lazy => 1);
 
@@ -26,7 +26,9 @@ sub BUILD {
 
 sub _build_base_url {
     my ($self) = @_;
-    return $self->port == 80 ? sprintf('http://%s', $self->host) : sprintf('http://%s:%s', $self->host, $self->port);
+    return $self->port == 443 ? sprintf('https://%s', $self->host)
+           : $self->port == 80 ? sprintf('http://%s', $self->host)
+           : sprintf('http://%s:%s', $self->host, $self->port);
   };
 
 sub find_lines {
