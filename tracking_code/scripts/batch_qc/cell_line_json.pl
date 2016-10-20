@@ -53,7 +53,7 @@ my %cell_lines;
 my %batch_qc_files;
 FILE:
 foreach my $file ( keys %cache_files) {
-  my $matches = $file =~ m{/incoming/wp5/batchqc/ebisc.batch_qc.(\d+).txt};
+  my $matches = $file =~ m{/incoming/wp5/batchqc/ebisc.batch_qc.(\d{1,8}).txt};
   next FILE if !$matches;
   $batch_qc_files{$1} = $file;
 }
