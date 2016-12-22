@@ -245,6 +245,7 @@ symlink($json_output, $current_json_output) or die $!;
 sub clean_column {
   my ($val) = @_;
   return if ! defined $val;
+  $val =~ s/\xa0/ /g;
   $val =~ s/^"(.*)"$/$1/;
   $val =~ s/^\s+//;
   $val =~ s/\s+$//;
