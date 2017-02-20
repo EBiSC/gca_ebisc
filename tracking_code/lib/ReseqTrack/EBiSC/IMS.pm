@@ -82,9 +82,7 @@ sub subset_lims_fields {
         if (defined $$sample{reprogramming_method}{data}{integrating_silencing_notes}){$sample_index->{reprogramming_method}{data}{integrating_vector_silencing_notes} = $$sample{reprogramming_method}{data}{integrating_vector_silencing_notes};}
         
         if (defined $$sample{primary_disease_diagnosed}){$sample_index->{disease_diagnosed} = $$sample{primary_disease_diagnosed};}
-        #TODO when availible if (defined $$sample{disease_diagnosed}){$sample_index->{disease_diagnosed} = $$sample{disease_diagnosed};}
         if (defined $$sample{primary_disease}{name}){$sample_index->{disease_names} = [$$sample{primary_disease}{name}];}
-        #TODO when availible if (defined $$sample{disease_names}){$sample_index->{disease_names} = $$sample{disease_names};}
         if (defined $$sample{disease_associated_phenotypes}){$sample_index->{disease_associated_phenotypes} = $$sample{disease_associated_phenotypes};}
         
         if (defined $$sample{depositor_cellline_culture_conditions}{surface_coating}){$sample_index->{depositor_cellline_culture_conditions}{surface_coating} = $$sample{depositor_cellline_culture_conditions}{surface_coating};}
