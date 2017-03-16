@@ -163,19 +163,6 @@ sub subset_lims_fields {
         #TODO if (defined $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{markers}){$sample_index->{characterization_differentiation_potency_ectoderm}{cell_types}{markers} = $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{markers};}
 
         if (defined $$sample{genetic_modification}{genetic_modification_flag}){$sample_index->{genetic_modification}{genetic_modification_flag} = $$sample{genetic_modification}{genetic_modification_flag};}
-        if (defined $$sample{genetic_modification}{types}){$sample_index->{genetic_modification}{types} = $$sample{genetic_modification}{types};}
-        
-        if (defined $$sample{genetic_modification_transgene_expression}{delivery_method}){$sample_index->{genetic_modification_transgene_expression}{delivery_method} = $$sample{genetic_modification_transgene_expression}{delivery_method};}
-        if (defined $$sample{genetic_modification_transgene_expression}{genes}){$sample_index->{genetic_modification_transgene_expression}{genes} = $$sample{genetic_modification_transgene_expression}{genes};}
-        
-        if (defined $$sample{genetic_modification_gene_knock_out}{delivery_method}){$sample_index->{genetic_modification_gene_knock_out}{delivery_method} = $$sample{genetic_modification_gene_knock_out}{delivery_method};}
-        if (defined $$sample{genetic_modification_gene_knock_out}{target_genes}){$sample_index->{genetic_modification_gene_knock_out}{target_genes} = $$sample{genetic_modification_gene_knock_out}{target_genes};}
-        if (defined $$sample{genetic_modification_gene_knock_in}{delivery_method}){$sample_index->{genetic_modification_gene_knock_in}{delivery_method} = $$sample{genetic_modification_gene_knock_in}{delivery_method};}
-        if (defined $$sample{genetic_modification_gene_knock_in}{target_genes}){$sample_index->{genetic_modification_gene_knock_in}{target_genes} = $$sample{genetic_modification_gene_knock_in}{target_genes};}
-        if (defined $$sample{genetic_modification_gene_knock_in}{transgenes}){$sample_index->{genetic_modification_gene_knock_in}{transgenes} = $$sample{genetic_modification_gene_knock_in}{transgenes};}
-        if (defined $$sample{genetic_modification_isogenic}{change_type}){$sample_index->{genetic_modification_isogenic}{change_type} = $$sample{genetic_modification_isogenic}{change_type};}
-        if (defined $$sample{genetic_modification_isogenic}{modified_sequence}){$sample_index->{genetic_modification_isogenic}{modified_sequence} = $$sample{genetic_modification_isogenic}{modified_sequence};}
-        if (defined $$sample{genetic_modification_isogenic}{target_locus}){$sample_index->{genetic_modification_isogenic}{target_locus} = $$sample{genetic_modification_isogenic}{target_locus};}
 
         if (defined $$sample{batches}){
           foreach my $batch (@{$sample->{batches}}) {
