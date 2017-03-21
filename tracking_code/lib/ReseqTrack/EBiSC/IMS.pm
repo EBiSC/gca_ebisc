@@ -162,7 +162,7 @@ sub subset_lims_fields {
         #TODO if (defined $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{other}){$sample_index->{characterization_differentiation_potency_ectoderm}{cell_types}{other} = $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{other};}
         #TODO if (defined $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{markers}){$sample_index->{characterization_differentiation_potency_ectoderm}{cell_types}{markers} = $$sample{characterization_differentiation_potency_ectoderm}{cell_types}{markers};}
 
-        if (defined $$sample{genetic_modification}{genetic_modification_flag}){$sample_index->{genetic_modification}{genetic_modification_flag} = $$sample{genetic_modification}{genetic_modification_flag};}
+        if (defined $$sample{genetic_modification_flag}){$sample_index->{genetic_modification}{genetic_modification_flag} = $$sample{genetic_modification_flag};}
 
         if (defined $$sample{batches}){
           foreach my $batch (@{$sample->{batches}}) {
