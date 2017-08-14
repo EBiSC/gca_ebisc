@@ -4,7 +4,7 @@ use warnings;
 
 use Getopt::Long;
 use XML::Simple;
-use JSON qw(encode_json);
+use JSON;
 use Try::Tiny;
 use autodie;
 use Data::Dumper;
@@ -36,8 +36,8 @@ $xml_data = $xml->XMLin($xmlinfile,forcearray => 1);
 my %ethics = (
   "1: STEMBANNC RECRUITED COHORT - UK Diabetes" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC diabetes PIS v2-7",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Diabetes v2-7.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -50,8 +50,8 @@ my %ethics = (
   },
   "2: UOXF -Bennett - Neuropathy" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "Painful Channelopathies Study Version 2. 07.07.2011",
-    hips_obtain_copy_of_unsigned_consent_form_file => "Painful Channelopathies Study Version 2. 07.07.2011",
+    hips_provide_copy_of_donor_consent_information_english_file => "Bennet Neuropathy Painful Channelopathies Study PIS Version 2. 07.07.2011.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Bennet Neuropathy Painful Channelopathies Study ICF Version 2. 07.07.2011.doc",
     hips_material_pseudonymised_or_anonymised => "anonymised",
     hips_approval_auth_name_relation_consent => "NHS-NRES Committee",
     hips_approval_number_relation_consent => "12/LO/0017",
@@ -62,10 +62,10 @@ my %ethics = (
     hips_consent_expressly_prevents_financial_gain_flag => "0",
     hips_third_party_obligations => "Only to be used into research into Painful Channelopathies / Pain syndromes. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
-  "3: UCL - Hardy - Cellular Functions…" => {
+  "3: UCL - Hardy - Cellular FunctionsÉ" => {
     hips_genetic_information_access_policy => "no_information",
-    hips_provide_copy_of_donor_consent_information_english_file => "Version 1.1 18/12/07",
-    hips_obtain_copy_of_unsigned_consent_form_file => "Version 1.0 30/07/07",
+    hips_provide_copy_of_donor_consent_information_english_file => "Hardy PD PIS Version 1.1 181207.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Hardy PD ICF Version 1.0 300707.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "Royal Free Hospital and Medical School Research Ethics Committee",
     hips_approval_number_relation_consent => "07/H0720/161",
@@ -78,8 +78,8 @@ my %ethics = (
   },
   "4: UOXF - Hu - PD" => {
     hips_genetic_information_access_policy => "no_information",
-    hips_provide_copy_of_donor_consent_information_english_file => "Version 5, 27/12/11",
-    hips_obtain_copy_of_unsigned_consent_form_file => "Version 2, 27/12/11",
+    hips_provide_copy_of_donor_consent_information_english_file => "Hu PD Version 5 27-12-11.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Hu PD Version 2 27-12-11.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "Berkshire Research Ethics Committee",
     hips_approval_number_relation_consent => "10/H0505/71",
@@ -92,8 +92,8 @@ my %ethics = (
   },
   "5: UCL - Hardy - AD" => {
     hips_genetic_information_access_policy => "no_information",
-    hips_provide_copy_of_donor_consent_information_english_file => "Version 1: 23 July 2009",
-    hips_obtain_copy_of_unsigned_consent_form_file => "Version 1: 23 July 2009",
+    hips_provide_copy_of_donor_consent_information_english_file => "John Hardy AD PIS Version 1 23 July 2009.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "John Hardy AD ICF Version 1 23 July 2009.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "National Hospital and Institute of Neurology Joint REC",
     hips_approval_number_relation_consent => "09/H0716/64",
@@ -106,38 +106,38 @@ my %ethics = (
   },
   "7: EUROWABB - Barrett - Diabetes" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "Euro-WABB Consent Form: Adult Patient. Version 4.1 25/05/2011",
-    hips_obtain_copy_of_unsigned_consent_form_file => "Euro-WABB Consent Form: Adult Patient. Version 4.2 30/06/2011",
+    hips_provide_copy_of_donor_consent_information_english_file => "Euro-WABB PIS Adult Patient. Version 4.1 25-05-2011.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Euro-WABB Consent Form Adult Patient. Version 4.2 30-06-2011.pdf",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "National Hospital and Institute of Neurology Joint REC",
     hips_approval_number_relation_consent => "11/WM/0127",
     hips_approval_auth_name_proposed_use => "National Hospital and Institute of Neurology Joint REC",
     hips_approval_number_proposed_use => "11/WM/0127",
     hips_documentation_provided_to_donor_flag => "1",
-    hips_documentation_provided_to_donor_input => ["BCH EURO-WABB Assent form v4.0 30-03-11", "UK EURO-WABB_registry_Info_sheet_11-16yrs_v4.1 25-05-11FINAL", "UK EURO-WABB_registry_Info_sheet_Under11yrs_v4.1"],
+    hips_documentation_provided_to_donor_input => ["BCH EURO-WABB Assent form v4.0 30-03-11.pdf", "UK EURO-WABB_registry_Info_sheet_11-16yrs_v4.1 25-05-11FINAL.pdf", "UK EURO-WABB_registry_Info_sheet_Under11yrs_v4.1 25-05-11FINAL.pdf"],
     hips_consent_permits_future_research_flag => "1",
     hips_consent_expressly_prevents_financial_gain_flag => "0",
     hips_third_party_obligations => "DNA sequencing can only be performed for research into Diabetes. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
   "8: UOXF - Talbot - Neuropathy" => {
     hips_genetic_information_access_policy => "no_information",
-    hips_provide_copy_of_donor_consent_information_english_file => "Version 1: 1st May 2012",
-    hips_obtain_copy_of_unsigned_consent_form_file => "Version 1: 01/06/2012",
+    hips_provide_copy_of_donor_consent_information_english_file => "Talbot Neuropathy PIS Version 1 1st June 2012.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Talbot Neuropathy ICF Version 1 01-06-2012.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "South East Wales Research Ethics Committee",
     hips_approval_number_relation_consent => "12/WA/0186",
     hips_approval_auth_name_proposed_use => "South East Wales Research Ethics Committee",
     hips_approval_number_proposed_use => "12/WA/0186",
     hips_documentation_provided_to_donor_flag => "1",
-    hips_documentation_provided_to_donor_input => ["Talbot Neuropathy Consultee Declaration Sheet 01-05-2012", "Talbot Neuropathy Consultee information sheet v1 20-07-2012"],
+    hips_documentation_provided_to_donor_input => ["Talbot Neuropathy Consultee Declaration Sheet 01-05-2012.doc", "Talbot Neuropathy Consultee information sheet v1 20-07-2012.doc"],
     hips_consent_permits_future_research_flag => "1",
     hips_consent_expressly_prevents_financial_gain_flag => "0",
     hips_third_party_obligations => "Research use restriction, only to be used for research into Motor Neuron Diseases. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
   "9: STEMBANNC RECRUITED COHORT - UK Neuropathy" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC neuropathy PIS v2-6",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2 ",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Neuropathy v2-6.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -150,8 +150,8 @@ my %ethics = (
   },
   "10: STEMBANNC RECRUITED COHORT - Migraine" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC migraine PIS v2-6",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Migraine v2-6.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -164,8 +164,8 @@ my %ethics = (
   },
   "11: STEMBANNC RECRUITED COHORT - Alzheimer's" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC Alzheimer's PIS v2-6",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Alzheimer's v2-6.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -178,8 +178,8 @@ my %ethics = (
   },
   "12: STEMBANNC RECRUITED COHORT - Bipolar" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC Bipolar PIS v2-8",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Bipolar v2-8.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -190,10 +190,10 @@ my %ethics = (
     hips_consent_expressly_prevents_financial_gain_flag => "1",
     hips_third_party_obligations => "DNA sequencing can only be performed for research into donors specified condition. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
-  "13: STEMBANNC RECRUITED COHORT - Control" => {
+  "13: STEMBANNC RECRUITED COHORT - Control " => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC Healthy controls PIS v2-5",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Healthy controls v2-5.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -204,10 +204,10 @@ my %ethics = (
     hips_consent_expressly_prevents_financial_gain_flag => "1",
     hips_third_party_obligations => "DNA sequencing can only be used as a control for research into other diseases. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
-  "14: UOXF - Alzheimer's" => {
+  "14: STEMBANCC RECRUITED COHORT- Parkinson's Disease " => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC Alzheimer's PIS v2-6",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Parkinson's v2-6.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -218,10 +218,10 @@ my %ethics = (
     hips_consent_expressly_prevents_financial_gain_flag => "1",
     hips_third_party_obligations => "DNA sequencing can only be performed for research into donors specified condition. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
-  "15: UOXF - Parkinson's Disease" => {
+  "15: STEMBANCC RECRUITED COHORT- Adverse Drug Responders" => {
     hips_genetic_information_access_policy => "controlled_access",
-    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC Parkinson's PIS v2-6",
-    hips_obtain_copy_of_unsigned_consent_form_file => "StemBANCC consent form v 2",
+    hips_provide_copy_of_donor_consent_information_english_file => "StemBANCC PIS Adverse Drug Responders v1-2.pdf",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Stembancc Consent Form v2.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "NRES Committee South Central - Hampshire A",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -280,8 +280,12 @@ my %diseases = (
 my %cellLines;
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
+  my $gender = lc($$cellLine{sex}[0]);
+  if ($gender eq "not known"){
+    $gender = "unknown";
+  }
   my %cellLine_doc = (
-    donor => {external_patient_header_id=> $$cellLine{external_patient_header_id}[0], gender => $$cellLine{sex}[0]},
+    donor => {external_patient_header_id=> $$cellLine{external_patient_header_id}[0], gender => $gender},
     source_platform => "ebisc",
     type_name => "hiPSC",
     vector_type => "non_integrating",
@@ -296,6 +300,9 @@ for (@{ $xml_data->{'CellLine'} }) {
     availability_restrictions => "with_restrictions",
     primary_celltype_purl => "http:\/\/purl.obolibrary.org\/obo\/CL_0000057",
     primary_celltype_ont_name => "fibroblast",
+    primary_celltype_ont_id => "CL_0000057",
+    primary_celltype_name => "fibroblast",
+    usage_approval_flag => ["research_only"],
 
     #Universal ethics responses
     hips_consent_obtained_from_donor_of_tissue_flag => "1",
@@ -321,34 +328,36 @@ for (@{ $xml_data->{'CellLine'} }) {
     hips_third_party_obligations_flag => "1",
     hips_further_constraints_on_use_flag => "0"
   );
-  
   my $donor_id = substr($$cellLine{name}[0],3,3);
-  print $donor_id, "\n";
-  print $ethics_codes{$donor_id}, "\n";
   for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
-    print $key, "\n";
-    push(@{$cellLine_doc{$key}}, $ethics{$$cellLine{ethics}[0]}{$$cellLine{disease}[0]}{$key});
+    $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
   }
+  my %each_disease;
   if ($$cellLine{disease}){
-    push(@{$cellLine_doc{disease_flag}}, "1");
+    $cellLine_doc{disease_flag} = "1";
+    $cellLine_doc{donor}{disease_flag} = "true";
+    my $mutation = $$cellLine{mutation}[0];
+    $mutation =~ s/^"(.*)"$/$1/;
+    my %variant = (free_text => [$mutation]);
     if ($diseases{$$cellLine{disease}[0]}){
       for my $key (keys($diseases{$$cellLine{disease}[0]})){
-        push(@{$cellLine_doc{donor}{$key}}, $diseases{$key}[0]);
-      } 
+        $each_disease{$key} = $diseases{$$cellLine{disease}[0]}{$key};
+      }
+      push(@{$each_disease{variants}}, \%variant);
+      push(@{$cellLine_doc{donor}{diseases}}, \%each_disease);
     }else{
       die "missing disease information for $$cellLine{disease}[0]";
     }
   }else{
-    push(@{$cellLine_doc{disease_flag}}, "0");
+    $cellLine_doc{disease_flag} = "0";
+    $cellLine_doc{donor}{disease_flag} = "false";
   }
   push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
-  push(@{$cellLine_doc{usage_approval_flag}}, "research_only");
-  
   #Add line to set
-  push(@{$cellLines{cellLines}}, %cellLine_doc);
+  push(@{$cellLines{cellLines}}, \%cellLine_doc);
 }
+
 my $jsonout = encode_json(\%cellLines);
 open my $fho, '>', $jsonoutfile or die "could not open $jsonoutfile $!";
-#print $fho $jsonout;
-print $jsonout;
+print $fho $jsonout;
 close($fho);
