@@ -33,6 +33,8 @@ my $xml_data;
 my $xml = new XML::Simple;
 $xml_data = $xml->XMLin($xmlinfile,forcearray => 1);
 
+my %lines_already_in_hPSCreg = ('SFC832-03-19' => 1, 'SFC833-03-01' => 1, 'SFC140-04-01' => 1, 'SFC855-03-06' => 1);
+
 my %ethics = (
   "1: STEMBANNC RECRUITED COHORT - UK Diabetes" => {
     hips_genetic_information_access_policy => "controlled_access",
@@ -114,7 +116,7 @@ my %ethics = (
     hips_approval_auth_name_proposed_use => "National Hospital and Institute of Neurology Joint REC",
     hips_approval_number_proposed_use => "11/WM/0127",
     hips_documentation_provided_to_donor_flag => "1",
-    hips_documentation_provided_to_donor_input => ["BCH EURO-WABB Assent form v4.0 30-03-11.pdf", "UK EURO-WABB_registry_Info_sheet_11-16yrs_v4.1 25-05-11FINAL.pdf", "UK EURO-WABB_registry_Info_sheet_Under11yrs_v4.1 25-05-11FINAL.pdf"],
+    hips_documentation_provided_to_donor_input => "EURO-WABB.zip",
     hips_consent_permits_future_research_flag => "1",
     hips_consent_expressly_prevents_financial_gain_flag => "0",
     hips_third_party_obligations => "DNA sequencing can only be performed for research into Diabetes. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
@@ -129,7 +131,7 @@ my %ethics = (
     hips_approval_auth_name_proposed_use => "South East Wales Research Ethics Committee",
     hips_approval_number_proposed_use => "12/WA/0186",
     hips_documentation_provided_to_donor_flag => "1",
-    hips_documentation_provided_to_donor_input => ["Talbot Neuropathy Consultee Declaration Sheet 01-05-2012.doc", "Talbot Neuropathy Consultee information sheet v1 20-07-2012.doc"],
+    hips_documentation_provided_to_donor_input => "Talbot Neuropathy.zip",
     hips_consent_permits_future_research_flag => "1",
     hips_consent_expressly_prevents_financial_gain_flag => "0",
     hips_third_party_obligations => "Research use restriction, only to be used for research into Motor Neuron Diseases. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
@@ -280,81 +282,83 @@ my %diseases = (
 my %cellLines;
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
-  my $gender = lc($$cellLine{sex}[0]);
-  if ($gender eq "not known"){
-    $gender = "unknown";
-  }
-  my %cellLine_doc = (
-    donor => {external_patient_header_id=> $$cellLine{external_patient_header_id}[0], gender => $gender},
-    source_platform => "ebisc",
-    type_name => "hiPSC",
-    vector_type => "non_integrating",
-    non_integrating_vector => "sendai_virus",
-    culture_conditions_medium_culture_medium => "mtesr_1",
-    karyotyping_flag => "1",
-    karyotyping_karyotype => "No abnormalities detected",
-    karyotyping_method => "molecular_snp",
-    fingerprinting_flag => "0",
-    genetic_modification_flag => "0",
-    available_flag => "1",
-    availability_restrictions => "with_restrictions",
-    primary_celltype_purl => "http:\/\/purl.obolibrary.org\/obo\/CL_0000057",
-    primary_celltype_ont_name => "fibroblast",
-    primary_celltype_ont_id => "CL_0000057",
-    primary_celltype_name => "fibroblast",
-    usage_approval_flag => ["research_only"],
-
-    #Universal ethics responses
-    hips_consent_obtained_from_donor_of_tissue_flag => "1",
-    hips_no_pressure_stat_flag => "1",
-    hips_derived_information_influence_personal_future_treatment_flag => "1",
-    hips_provide_copy_of_donor_consent_information_english_flag => "1",
-    hips_informed_consent_flag => "0",
-    hips_holding_original_donor_consent_flag => "1",
-    hips_holding_original_donor_consent_contact_info => "zameel.cader\@ndcn.ox.ac.uk",
-    hips_obtain_copy_of_unsigned_consent_form_flag => "1",
-    hips_consent_prevents_ips_derivation_flag => "0",
-    hips_consent_prevents_availability_to_worldwide_research_flag => "0",
-    hips_ethics_review_panel_opinion_relation_consent_form_flag => "1",
-    hips_consent_prevents_derived_cells_availability_to_worldwide_research_flag => "0",
-    hips_donor_financial_gain_flag => "0",
-    hips_ethics_review_panel_opinion_project_proposed_use_flag => "1",
-    hips_consent_by_qualified_professional_flag => "1",
-    hips_consent_pertains_specific_research_project_flag => "0",
-    hips_consent_expressly_prevents_commercial_development_flag => "0",
-    hips_consent_permits_stop_of_derived_material_use_flag => "0",
-    hips_consent_permits_delivery_of_information_and_data_flag => "0",
-    hips_ethics_review_panel_opinion_relation_consent_form_flag => "1",
-    hips_third_party_obligations_flag => "1",
-    hips_further_constraints_on_use_flag => "0"
-  );
-  my $donor_id = substr($$cellLine{name}[0],3,3);
-  for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
-    $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
-  }
-  my %each_disease;
-  if ($$cellLine{disease}){
-    $cellLine_doc{disease_flag} = "1";
-    $cellLine_doc{donor}{disease_flag} = "true";
-    my $mutation = $$cellLine{mutation}[0];
-    $mutation =~ s/^"(.*)"$/$1/;
-    my %variant = (free_text => [$mutation]);
-    if ($diseases{$$cellLine{disease}[0]}){
-      for my $key (keys($diseases{$$cellLine{disease}[0]})){
-        $each_disease{$key} = $diseases{$$cellLine{disease}[0]}{$key};
-      }
-      push(@{$each_disease{variants}}, \%variant);
-      push(@{$cellLine_doc{donor}{diseases}}, \%each_disease);
-    }else{
-      die "missing disease information for $$cellLine{disease}[0]";
+  if (!$lines_already_in_hPSCreg{$$cellLine{name}[0]}){
+    my $gender = lc($$cellLine{sex}[0]);
+    if ($gender eq "not known"){
+      $gender = "unknown";
     }
-  }else{
-    $cellLine_doc{disease_flag} = "0";
-    $cellLine_doc{donor}{disease_flag} = "false";
+    my %cellLine_doc = (
+      donor => {donor_internal_ids__list_entry_name => [$$cellLine{external_patient_header_id}[0]], gender => $gender},
+      source_platform => "ebisc",
+      type_name => "hiPSC",
+      vector_type => "non_integrating",
+      non_integrating_vector => "sendai_virus",
+      culture_conditions_medium_culture_medium => "mtesr_1",
+      karyotyping_flag => "1",
+      karyotyping_karyotype => "No abnormalities detected",
+      karyotyping_method => "molecular_snp",
+      fingerprinting_flag => "0",
+      genetic_modification_flag => "0",
+      available_flag => "1",
+      availability_restrictions => "with_restrictions",
+      primary_celltype_purl => "http:\/\/purl.obolibrary.org\/obo\/CL_0000057",
+      primary_celltype_ont_name => "fibroblast",
+      primary_celltype_ont_id => "CL_0000057",
+      primary_celltype_name => "fibroblast",
+      usage_approval_flag => ["research_only"],
+
+      #Universal ethics responses
+      hips_consent_obtained_from_donor_of_tissue_flag => "1",
+      hips_no_pressure_stat_flag => "1",
+      hips_derived_information_influence_personal_future_treatment_flag => "1",
+      hips_provide_copy_of_donor_consent_information_english_flag => "1",
+      hips_informed_consent_flag => "0",
+      hips_holding_original_donor_consent_flag => "1",
+      hips_holding_original_donor_consent_contact_info => "zameel.cader\@ndcn.ox.ac.uk",
+      hips_obtain_copy_of_unsigned_consent_form_flag => "1",
+      hips_consent_prevents_ips_derivation_flag => "0",
+      hips_consent_prevents_availability_to_worldwide_research_flag => "0",
+      hips_ethics_review_panel_opinion_relation_consent_form_flag => "1",
+      hips_consent_prevents_derived_cells_availability_to_worldwide_research_flag => "0",
+      hips_donor_financial_gain_flag => "0",
+      hips_ethics_review_panel_opinion_project_proposed_use_flag => "1",
+      hips_consent_by_qualified_professional_flag => "1",
+      hips_consent_pertains_specific_research_project_flag => "0",
+      hips_consent_expressly_prevents_commercial_development_flag => "0",
+      hips_consent_permits_stop_of_derived_material_use_flag => "0",
+      hips_consent_permits_delivery_of_information_and_data_flag => "0",
+      hips_ethics_review_panel_opinion_relation_consent_form_flag => "1",
+      hips_third_party_obligations_flag => "1",
+      hips_further_constraints_on_use_flag => "0"
+    );
+    my $donor_id = substr($$cellLine{name}[0],3,3);
+    for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
+      $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
+    }
+    my %each_disease;
+    if ($$cellLine{disease}){
+      $cellLine_doc{disease_flag} = "1";
+      $cellLine_doc{donor}{disease_flag} = "true";
+      my $mutation = $$cellLine{mutation}[0];
+      $mutation =~ s/^"(.*)"$/$1/;
+      my %variant = (free_text => [$mutation]);
+      if ($diseases{$$cellLine{disease}[0]}){
+        for my $key (keys($diseases{$$cellLine{disease}[0]})){
+          $each_disease{$key} = $diseases{$$cellLine{disease}[0]}{$key};
+        }
+        push(@{$each_disease{variants}}, \%variant);
+        push(@{$cellLine_doc{donor}{diseases}}, \%each_disease);
+      }else{
+        die "missing disease information for $$cellLine{disease}[0]";
+      }
+    }else{
+      $cellLine_doc{disease_flag} = "0";
+      $cellLine_doc{donor}{disease_flag} = "false";
+    }
+    push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
+    #Add line to set
+    push(@{$cellLines{cellLines}}, \%cellLine_doc);
   }
-  push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
-  #Add line to set
-  push(@{$cellLines{cellLines}}, \%cellLine_doc);
 }
 
 my $jsonout = encode_json(\%cellLines);
