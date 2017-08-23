@@ -6,8 +6,10 @@ use Getopt::Long;
 use XML::Simple;
 use JSON;
 use Try::Tiny;
+use Text::Unidecode;
 use autodie;
 use Data::Dumper;
+
 
 my ($xmlinfile, $jsonoutfile, $ethicsinfile);
 
@@ -64,7 +66,7 @@ my %ethics = (
     hips_consent_expressly_prevents_financial_gain_flag => "0",
     hips_third_party_obligations => "Only to be used into research into Painful Channelopathies / Pain syndromes. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
-  "3: UCL - Hardy - Cellular FunctionsÉ" => {
+  "3: UCL - Hardy - Cellular Functions" => {
     hips_genetic_information_access_policy => "no_information",
     hips_provide_copy_of_donor_consent_information_english_file => "Hardy PD PIS Version 1.1 181207.doc",
     hips_obtain_copy_of_unsigned_consent_form_file => "Hardy PD ICF Version 1.0 300707.doc",
@@ -331,7 +333,9 @@ for (@{ $xml_data->{'CellLine'} }) {
       hips_third_party_obligations_flag => "1",
       hips_further_constraints_on_use_flag => "0"
     );
-    my $donor_id = substr($$cellLine{name}[0],3,3);
+    my $donor_id = $$cellLine{name}[0];
+    $donor_id =~ /^\D+(\d*)/;
+    $donor_id = $1;    
     for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
       $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
     }
@@ -339,7 +343,8 @@ for (@{ $xml_data->{'CellLine'} }) {
     if ($$cellLine{disease}){
       $cellLine_doc{disease_flag} = "1";
       $cellLine_doc{donor}{disease_flag} = "true";
-      my $mutation = $$cellLine{mutation}[0];
+      my $mutation = unidecode($$cellLine{mutation}[0]);
+      $mutation =~ s/\n/ /g;
       $mutation =~ s/^"(.*)"$/$1/;
       my %variant = (free_text => [$mutation]);
       if ($diseases{$$cellLine{disease}[0]}){
