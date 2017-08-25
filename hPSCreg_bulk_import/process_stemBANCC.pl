@@ -47,6 +47,24 @@ foreach my $line (@agesexlines){
   }
 }
 
+#Override missing diseases
+my %disease_overide = (
+  "SFC810-03-01" => "Alzheimers",
+  "SFC810-03-02" => "Alzheimers",
+  "SFC810-03-03" => "Alzheimers",
+  "SFC800-03-03" => "Diabetes",
+  "SFC800-03-01" => "Diabetes",
+  "SFC026-04-10" => "Migraine",
+  "SFC888-07-01" => "Diabetes",
+  "SFC888-07-02" => "Diabetes",
+  "SFC888-07-03" => "Diabetes",
+  "BPC321-01-06" => "Dili",
+  "BPC321-01-07" => "Dili",
+  "BPC321-01-09" => "Dili",
+  "BPC339-03-01" => "Dili",
+  "BPC340-03-06" => "Longqt"
+);
+
 my %age_range;
 my $age = 0;
 my $age_lower = 0;
@@ -310,20 +328,38 @@ my %diseases = (
     purl => "http:\/\/www.ebi.ac.uk\/efo\/EFO_0000289", 
     purl_name => "bipolar disorder", 
     synonyms => ["Psychoses", "Manic-Depressive", "Bipolar affective disorder", "current episode depression (disorder)", "Manic bipolar I disorder", "Manic-depressive psychosis", "mixed bipolar affective disorder", "NOS (disorder)", "Disorder", "Bipolar", "Manic bipolar I disorder (disorder)", "Manias", "Bipolar Disorders", "Affective Bipolar Psychosis", "Psychosis", "Bipolar Affective", "Psychosis", "Manic-Depressive", "Manic Depressive Psychosis", "MANIC DIS", "Bipolar Depression", "BIPOLAR DIS", "Manic Disorders", "Unspecified bipolar affective disorder", "NOS (disorder)", "Bipolar affective disorder", "Manic States", "Manic Depressive disorder", "Unspecified bipolar affective disorder", "State", "Manic", "Psychoses", "Manic Depressive", "MANIC DEPRESSIVE ILLNESS", "Mania", "bipolar disorder manic phase", "Unspecified bipolar affective disorder", "NOS", "Psychoses", "Bipolar Affective", "Unspecified bipolar affective disorder", "unspecified (disorder)", "Unspecified bipolar affective disorder", "unspecified", "Psychosis", "Manic Depressive", "Bipolar affective disorder ", "current episode mixed (disorder)", "Disorder", "Manic", "Manic-Depressive Psychoses", "Manic Disorder", "States", "Manic", "mixed bipolar disorder", "[X]Bipolar affective disorder", "unspecified (disorder)", "Unspecified bipolar affective disorder (disorder)", "Bipolar disorder", "unspecified", "Bipolar Affective Psychosis", "Manic-depressive syndrome NOS", "Manic Bipolar Affective disorder", "Manic State", "Bipolar affective disorder", "manic", "unspecified degree", "Bipolar disorder (disorder)", "mixed bipolar affective disorder (disorder)", "Affective Psychosis", "Bipolar", "[X]Bipolar affective disorder", "unspecified", "bipolar disease", "Bipolar affective disorder", "mixed", "unspecified degree", "MDI - Manic-depressive illness", "Manic-depressive illness", "Bipolar disorder", "NOS", "BIPOLAR DISORDER NOS", "mixed bipolar I disorder (disorder)", "Depression", "Bipolar", "Depressive-manic psych.", "Manic-Depression"]
+  },
+  Longqt => {
+    disease_flag => "true", 
+    primary => "true", 
+    purl => "http:\/\/www.orpha.net\/ORDO\/Orphanet_768", 
+    purl_name => "Familial long QT syndrome", 
+    synonyms => ["Congenital long QT syndrome"]
+  },
+  Dili => {
+    disease_flag => "true", 
+    primary => "true", 
+    purl => "http:\/\/www.ebi.ac.uk\/efo\/EFO_0004228", 
+    purl_name => "drug-induced liver injury", 
+    synonyms => ["Liver Injury", "Drug-Induced", "Drug-Induced Liver Disease", "Toxic Hepatitis", "Hepatitis", "Toxic", "Hepatitis", "Drug-Induced"]
   }
   );
 
 #Get pathogen status of parent lines
 my %pathogen_status;
 my %donor_names;
+my %blood_cells;
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
+  my $donor_id = $$cellLine{name}[0];
+  $donor_id =~ /^\D+(\d*)/;
+  $donor_id = $1;  
   if ($$cellLine{cell_type}[0] eq "Fibroblast" or $$cellLine{cell_type}[0] eq "Blood"){
-    my $donor_id = $$cellLine{name}[0];
-    $donor_id =~ /^\D+(\d*)/;
-    $donor_id = $1;  
     $pathogen_status{$donor_id} = $$cellLine{pathogen}[0];
     $donor_names{$donor_id} = $$cellLine{name}[0];
+  }
+  if ($$cellLine{cell_type}[0] eq "Blood"){
+    $blood_cells{$donor_id} = 1;
   }
 }
 
@@ -408,10 +444,21 @@ for (@{ $xml_data->{'CellLine'} }) {
       }else{
         die "missing disease information for $$cellLine{disease}[0]";
       }
-    }else{
+    }elsif (exists $disease_overide{$$cellLine{name}[0]}){
+      $cellLine_doc{disease_flag} = "1";
+      $cellLine_doc{donor}{disease_flag} = "true";
+      if ($diseases{$disease_overide{$$cellLine{name}[0]}}){
+        for my $key (keys($diseases{$disease_overide{$$cellLine{name}[0]}})){
+          $each_disease{$key} = $diseases{$disease_overide{$$cellLine{name}[0]}}{$key};
+        }
+        push(@{$cellLine_doc{donor}{diseases}}, \%each_disease);
+      }else{
+        die "missing disease information for $$cellLine{disease}[0]";
+      }
+    }
+    else{
       $cellLine_doc{disease_flag} = "0";
       $cellLine_doc{donor}{disease_flag} = "false";
-      print $$cellLine{name}[0], "\n";
     }
     if ($pathogen_status{$donor_id}){
       if ($pathogen_status{$donor_id} eq "Negative"){
@@ -434,6 +481,12 @@ for (@{ $xml_data->{'CellLine'} }) {
     }
     if ($age_codes{$$cellLine{name}[0]}){
       $cellLine_doc{donor}{donor_age} = $age_range{$age_codes{$$cellLine{name}[0]}};
+    }
+    if ($blood_cells{$donor_id}){
+      $cellLine_doc{primary_celltype_purl} = "http:\/\/purl.obolibrary.org\/obo\/CL_0000081",
+      $cellLine_doc{primary_celltype_ont_name} = "blood cell",
+      $cellLine_doc{primary_celltype_ont_id} = "CL_0000081",
+      $cellLine_doc{primary_celltype_name} = "blood cell",
     }
     push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
     #Add line to set
