@@ -281,10 +281,23 @@ my %diseases = (
   }
   );
 
+#Get pathogen status of parent lines
+my %pathogen_status;
+for (@{ $xml_data->{'CellLine'} }) {
+  my $cellLine = $_;
+  if ($$cellLine{cell_type}[0] eq "Fibroblast"){
+    my $donor_id = $$cellLine{name}[0];
+    $donor_id =~ /^\D+(\d*)/;
+    $donor_id = $1;  
+    $pathogen_status{$donor_id} = $$cellLine{pathogen}[0];
+  }
+}
+
+#Process iPS lines
 my %cellLines;
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
-  if (!$lines_already_in_hPSCreg{$$cellLine{name}[0]}){
+  if (!$lines_already_in_hPSCreg{$$cellLine{name}[0]} and $$cellLine{cell_type}[0] eq "iPS"){
     my $gender = lc($$cellLine{sex}[0]);
     if ($gender eq "not known"){
       $gender = "unknown";
@@ -359,6 +372,17 @@ for (@{ $xml_data->{'CellLine'} }) {
     }else{
       $cellLine_doc{disease_flag} = "0";
       $cellLine_doc{donor}{disease_flag} = "false";
+    }
+    if ($pathogen_status{$donor_id}){
+      if ($pathogen_status{$donor_id} eq "Negative"){
+        $cellLine_doc{virology_screening_flag} = "1";
+        $cellLine_doc{virology_screening_hiv_1_flag} = "1";
+        $cellLine_doc{virology_screening_hbv_flag} = "1";
+        $cellLine_doc{virology_screening_hcv_flag} = "1";
+        $cellLine_doc{virology_screening_hiv_1_result} = "negative";
+        $cellLine_doc{virology_screening_hbv_result} = "negative";
+        $cellLine_doc{virology_screening_hcv_result} = "negative";
+      }
     }
     push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
     #Add line to set
