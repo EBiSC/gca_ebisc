@@ -11,16 +11,18 @@ use autodie;
 use Data::Dumper;
 
 
-my ($xmlinfile, $jsonoutfile, $ethicsinfile);
+my ($xmlinfile, $jsonoutfile, $ethicsinfile, $agesexinfile);
 
 GetOptions("xmlinfile=s" => \$xmlinfile,
   "jsonoutfile=s" => \$jsonoutfile,
   "ethicsinfile=s" => \$ethicsinfile,
+  "agesexinfile=s" => \$agesexinfile
 );
 
 die "missing json xmlinfile" if !$xmlinfile;
 die "missing json jsonoutfile" if !$jsonoutfile;
 die "missing ethicsinfile" if !$ethicsinfile;
+die "missing agesexinfile" if !$agesexinfile;
 
 my %ethics_codes;
 open my $fhi, '<', $ethicsinfile or die "could not open $ethicsinfile $!";
@@ -29,6 +31,36 @@ foreach my $line (@lines){
   chomp($line);
   my @parts = split("\t", $line);
   $ethics_codes{$parts[0]} = $parts[1];
+}
+
+my (%sex_codes, %age_codes);
+open my $fhas, '<', $agesexinfile or die "could not open $agesexinfile $!";
+my @agesexlines = <$fhas>;
+foreach my $line (@agesexlines){
+  chomp($line);
+  my @parts = split("\t", $line);
+  if ($parts[1]){
+    $sex_codes{$parts[0]} = $parts[1];
+  }
+  if ($parts[2]){
+    $age_codes{$parts[0]} = $parts[2];
+  }
+}
+
+my %age_range;
+my $age = 0;
+my $age_lower = 0;
+while ($age < 100){
+  my $age_upper = $age_lower+4;
+  $age_range{$age} = "$age_lower\-$age_upper";
+  $age++;
+  if ($age > ($age_lower+4)){
+    $age_lower = $age;
+  }
+}
+while ($age < 140){
+  $age_range{$age} = "100-";
+  $age++;
 }
 
 my $xml_data;
@@ -283,27 +315,33 @@ my %diseases = (
 
 #Get pathogen status of parent lines
 my %pathogen_status;
+my %donor_names;
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
-  if ($$cellLine{cell_type}[0] eq "Fibroblast"){
+  if ($$cellLine{cell_type}[0] eq "Fibroblast" or $$cellLine{cell_type}[0] eq "Blood"){
     my $donor_id = $$cellLine{name}[0];
     $donor_id =~ /^\D+(\d*)/;
     $donor_id = $1;  
     $pathogen_status{$donor_id} = $$cellLine{pathogen}[0];
+    $donor_names{$donor_id} = $$cellLine{name}[0];
   }
 }
 
 #Process iPS lines
 my %cellLines;
+my $i = 1;
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
   if (!$lines_already_in_hPSCreg{$$cellLine{name}[0]} and $$cellLine{cell_type}[0] eq "iPS"){
+    my $donor_id = $$cellLine{name}[0];
+    $donor_id =~ /^\D+(\d*)/;
+    $donor_id = $1;   
     my $gender = lc($$cellLine{sex}[0]);
     if ($gender eq "not known"){
       $gender = "unknown";
     }
     my %cellLine_doc = (
-      donor => {donor_internal_ids__list_entry_name => [$$cellLine{external_patient_header_id}[0]], gender => $gender},
+      donor => {donor_internal_ids__list_entry_name => [$$cellLine{external_patient_header_id}[0], $donor_names{$donor_id}], gender => $gender},
       source_platform => "ebisc",
       type_name => "hiPSC",
       vector_type => "non_integrating",
@@ -321,6 +359,9 @@ for (@{ $xml_data->{'CellLine'} }) {
       primary_celltype_ont_id => "CL_0000057",
       primary_celltype_name => "fibroblast",
       usage_approval_flag => ["research_only"],
+      o2_concentration => "21",
+      co2_concentration => "5",
+      surface_coating => "matrigel",
 
       #Universal ethics responses
       hips_consent_obtained_from_donor_of_tissue_flag => "1",
@@ -346,9 +387,7 @@ for (@{ $xml_data->{'CellLine'} }) {
       hips_third_party_obligations_flag => "1",
       hips_further_constraints_on_use_flag => "0"
     );
-    my $donor_id = $$cellLine{name}[0];
-    $donor_id =~ /^\D+(\d*)/;
-    $donor_id = $1;    
+ 
     for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
       $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
     }
@@ -372,6 +411,7 @@ for (@{ $xml_data->{'CellLine'} }) {
     }else{
       $cellLine_doc{disease_flag} = "0";
       $cellLine_doc{donor}{disease_flag} = "false";
+      print $$cellLine{name}[0], "\n";
     }
     if ($pathogen_status{$donor_id}){
       if ($pathogen_status{$donor_id} eq "Negative"){
@@ -383,6 +423,17 @@ for (@{ $xml_data->{'CellLine'} }) {
         $cellLine_doc{virology_screening_hbv_result} = "negative";
         $cellLine_doc{virology_screening_hcv_result} = "negative";
       }
+    }
+    #Overwrite age and sex from MDA
+    if ($sex_codes{$$cellLine{name}[0]}){
+      if ($sex_codes{$$cellLine{name}[0]} eq "M"){
+        $cellLine_doc{donor}{gender} = "male"
+      }elsif ($sex_codes{$$cellLine{name}[0]} eq "F"){
+        $cellLine_doc{donor}{gender} = "female"
+      }
+    }
+    if ($age_codes{$$cellLine{name}[0]}){
+      $cellLine_doc{donor}{donor_age} = $age_range{$age_codes{$$cellLine{name}[0]}};
     }
     push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
     #Add line to set
