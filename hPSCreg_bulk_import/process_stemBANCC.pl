@@ -398,6 +398,11 @@ for (@{ $xml_data->{'CellLine'} }) {
       o2_concentration => "21",
       co2_concentration => "5",
       surface_coating => "matrigel",
+      passage_method => "enzyme_free",
+      passage_method_enzyme_free => "edta",
+      feeder_cells_flag => "0",
+      virology_screening_mycoplasma_flag =>  "1",
+      virology_screening_mycoplasma_result => "negative",
 
       #Universal ethics responses
       hips_consent_obtained_from_donor_of_tissue_flag => "1",
