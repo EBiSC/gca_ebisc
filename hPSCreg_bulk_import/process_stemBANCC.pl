@@ -493,6 +493,12 @@ for (@{ $xml_data->{'CellLine'} }) {
       $cellLine_doc{primary_celltype_ont_id} = "CL_0000081",
       $cellLine_doc{primary_celltype_name} = "blood cell",
     }
+    if ($$cellLine{name}[0] =~ m/^BP/){
+      $cellLine_doc{primary_celltype_purl} = "http:\/\/purl.obolibrary.org\/obo\/CL_0000765",
+      $cellLine_doc{primary_celltype_ont_name} = "erythroblast",
+      $cellLine_doc{primary_celltype_ont_id} = "CL_0000765",
+      $cellLine_doc{primary_celltype_name} = "PBMC erythroblasts",
+    }
     push(@{$cellLine_doc{alternate_name}}, $$cellLine{name}[0]);
     #Add line to set
     push(@{$cellLines{cellLines}}, \%cellLine_doc);
