@@ -343,29 +343,30 @@ my %ethics = (
     hips_third_party_obligations => "DNA sequencing can only be performed for research into donors specified condition. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct exploitation means to develop for commericalization or to commercialize the Material."
   },
   "16: MRC Biobank - Neuropathy" => {
-  #  hips_holding_original_donor_consent_contact_info => "",
-  #  hips_consent_pertains_specific_research_project_flag => "",
-  #  hips_genetic_information_access_policy => "",
-  #  hips_provide_copy_of_donor_consent_information_english_file => "",
-  #  hips_obtain_copy_of_unsigned_consent_form_file => "",
-  #  hips_material_pseudonymised_or_anonymised => "",
-  #  hips_approval_auth_name_relation_consent => "",
-  #  hips_approval_number_relation_consent => "",
-  #  hips_approval_auth_name_proposed_use => "",
-  #  hips_approval_number_proposed_use => "",
-  #  hips_documentation_provided_to_donor_flag => "",
-  #  hips_consent_permits_future_research_flag => "",
-  #  hips_consent_expressly_prevents_financial_gain_flag => "",
-  #  hips_third_party_obligations_flag => "",
-  #  hips_further_constraints_on_use_flag => "",
-  #  hips_third_party_obligations => ""
+    hips_holding_original_donor_consent_contact_info => "f.muntoni\@ucl.ac.uk",
+    hips_consent_pertains_specific_research_project_flag => "0",
+    hips_genetic_information_access_policy => "no_information",
+    hips_provide_copy_of_donor_consent_information_english_file => "MRC Biobank InfoSheets_Adults_V6.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "MRC Biobank Consent_Form_Adult_V3.doc",
+    hips_material_pseudonymised_or_anonymised => "pseudonymised",
+    hips_approval_auth_name_relation_consent => "West London & GTAC Research Ethics Committee",
+    hips_approval_number_relation_consent => "06/Q0406/33",
+    hips_approval_auth_name_proposed_use => "West London & GTAC Research Ethics Committee",
+    hips_approval_number_proposed_use => "06/Q0406/33",
+    hips_documentation_provided_to_donor_flag => "0",
+    hips_consent_permits_future_research_flag => "1",
+    hips_consent_expressly_prevents_financial_gain_flag => "0",
+    hips_third_party_obligations_flag => "1",
+    hips_third_party_obligations => "DNA sequencing can only be performed for research into donors specified condition. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct   exploitation means to develop for commericalization or to commercialize the Material.",
+    hips_further_constraints_on_use_flag => "1",
+    hips_further_constraints_on_use => "Restricted to research into Neuromuscular Disorders."
   },
   "17: Depondt - Migraine" => {
     hips_holding_original_donor_consent_contact_info => "Chantal.Depondt\@ulb.ac.be",
     hips_consent_pertains_specific_research_project_flag => "1",
     hips_genetic_information_access_policy => "no_information",
-    hips_provide_copy_of_donor_consent_information_english_file => "",
-    hips_obtain_copy_of_unsigned_consent_form_file => "",
+    hips_provide_copy_of_donor_consent_information_english_file => "Depondt PIS ICF.doc",
+    hips_obtain_copy_of_unsigned_consent_form_file => "Depondt PIS ICF.doc",
     hips_material_pseudonymised_or_anonymised => "pseudonymised",
     hips_approval_auth_name_relation_consent => "Ethics Committee Erasme Hospital",
     hips_approval_number_relation_consent => "13/SC/0179",
@@ -374,7 +375,8 @@ my %ethics = (
     hips_documentation_provided_to_donor_flag => "0",
     hips_consent_permits_future_research_flag => "1",
     hips_consent_expressly_prevents_financial_gain_flag => "0",
-    hips_third_party_obligations_flag => "0",
+    hips_third_party_obligations_flag => "1",
+    hips_third_party_obligations => "DNA sequencing can only be performed for research into donors specified condition. Material shall not be sold, transplanted into any human being or used to create egg or sperm cells (gametes) or embryos. The material shall not be used for direct exploitation. For the purposes of this, Direct   exploitation means to develop for commericalization or to commercialize the Material.",
     hips_further_constraints_on_use_flag => "1",
     hips_further_constraints_on_use => "Restricted to research into epilepsy."
   }
@@ -444,7 +446,9 @@ my %blood_cells;
 CELLLINE:
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
-  next CELLLINE if $$cellLine{name}[0] eq "SF155"; #TODO Remove exclusion of these lines when corrected in StemDB is missing cell type
+  if ($$cellLine{name}[0] eq "SF155"){ #TODO Remove exclusion of these lines when corrected in StemDB is missing cell type
+    $$cellLine{cell_type}[0]= "Fibroblast";
+  }
   my $donor_id = $$cellLine{name}[0];
   $donor_id =~ /^\D+(\d*)/;
   $donor_id = $1;
@@ -458,12 +462,15 @@ for (@{ $xml_data->{'CellLine'} }) {
 }
 
 #Process iPS lines
+my %missing_donors;
 my %cellLines;
 my $i = 1;
 CELLLINE:
 for (@{ $xml_data->{'CellLine'} }) {
   my $cellLine = $_;
-  next CELLLINE if $$cellLine{name}[0] eq "SF155"; #TODO Remove exclusion of these lines when corrected in StemDB is missing cell type
+  if ($$cellLine{name}[0] eq "SF155"){ #TODO Remove exclusion of these lines when corrected in StemDB is missing cell type
+    $$cellLine{cell_type}[0]= "Fibroblast";
+  }
   if (!$lines_already_in_hPSCreg{$$cellLine{name}[0]} and $$cellLine{cell_type}[0] eq "iPS"){
     my $donor_id = $$cellLine{name}[0];
     $donor_id =~ /^\D+(\d*)/;
@@ -520,11 +527,12 @@ for (@{ $xml_data->{'CellLine'} }) {
       hips_consent_permits_delivery_of_information_and_data_flag => "0",
       hips_ethics_review_panel_opinion_relation_consent_form_flag => "1",
     );
-    print $donor_id, "\n";
-    next CELLLINE if $ethics_codes{$donor_id} eq "16: MRC Biobank - Neuropathy"; #TODO Remove exclusion of these lines when given ethics go ahead from RC
-    next CELLLINE if $ethics_codes{$donor_id} eq "17: Depondt - Migraine"; #TODO Remove exclusion of these lines when given ethics go ahead from RC
-    for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
-      $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
+    if ($ethics{$ethics_codes{$donor_id}}){
+      for my $key (keys(%{$ethics{$ethics_codes{$donor_id}}})){
+        $cellLine_doc{$key} = $ethics{$ethics_codes{$donor_id}}{$key};
+      }
+    }else{
+      $missing_donors{$donor_id} = 1;
     }
     my %each_disease;
     if ($$cellLine{disease}){
@@ -597,6 +605,10 @@ for (@{ $xml_data->{'CellLine'} }) {
     #Add line to set
     push(@{$cellLines{cellLines}}, \%cellLine_doc);
   }
+}
+
+foreach my $key (sort(keys(%missing_donors))){
+  print $key, "\n";
 }
 
 my $jsonout = encode_json(\%cellLines);
