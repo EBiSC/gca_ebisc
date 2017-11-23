@@ -567,16 +567,20 @@ for (@{ $xml_data->{'CellLine'} }) {
       $cellLine_doc{disease_flag} = "0";
       $cellLine_doc{donor}{disease_flag} = "false";
     }
-    if ($pathogen_status{$donor_id}){
-      if ($pathogen_status{$donor_id} eq "Negative"){
-        $cellLine_doc{virology_screening_flag} = "1";
-        $cellLine_doc{virology_screening_hiv_1_flag} = "1";
-        $cellLine_doc{virology_screening_hbv_flag} = "1";
-        $cellLine_doc{virology_screening_hcv_flag} = "1";
-        $cellLine_doc{virology_screening_hiv_1_result} = "negative";
-        $cellLine_doc{virology_screening_hbv_result} = "negative";
-        $cellLine_doc{virology_screening_hcv_result} = "negative";
-      }
+    if ($$cellLine{pathogen}[0] eq "Negative"){
+      $cellLine_doc{virology_screening_flag} = "1";
+      $cellLine_doc{virology_screening_hiv_1_flag} = "1";
+      $cellLine_doc{virology_screening_hbv_flag} = "1";
+      $cellLine_doc{virology_screening_hcv_flag} = "1";
+      $cellLine_doc{virology_screening_hiv_1_result} = "negative";
+      $cellLine_doc{virology_screening_hbv_result} = "negative";
+      $cellLine_doc{virology_screening_hcv_result} = "negative";
+    }
+    elsif($$cellLine{pathogen}[0] eq "Not_Tested"){
+      $cellLine_doc{virology_screening_flag} = "0";
+    }else{
+      print $$cellLine{name}[0], "\t", $$cellLine{pathogen}[0], "\n";
+      die "Pathogen error for $$cellLine{name}[0]";
     }
     #Overwrite age and sex from MDA
     if ($sex_codes{$$cellLine{name}[0]}){
