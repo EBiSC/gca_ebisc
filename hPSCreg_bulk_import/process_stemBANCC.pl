@@ -364,6 +364,7 @@ my %ethics = (
   "17: Depondt - Migraine" => {
     hips_holding_original_donor_consent_contact_info => "Chantal.Depondt\@ulb.ac.be",
     hips_consent_pertains_specific_research_project_flag => "1",
+    hips_future_research_permitted_areas => "The relevant IRB approved sharing of these Biosamples with StemBANCC.",
     hips_genetic_information_access_policy => "no_information",
     hips_provide_copy_of_donor_consent_information_english_file => "Depondt PIS ICF.doc",
     hips_obtain_copy_of_unsigned_consent_form_file => "Depondt PIS ICF.doc",
