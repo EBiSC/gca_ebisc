@@ -33,7 +33,7 @@ sub _build_base_url {
 
 sub find_lines {
   my ($self, %options) = @_;
-  my $url = sprintf('%s%s', $self->base_url, $options{url}||"/api/full_list");
+  my $url = sprintf('%s%s', $self->base_url, $options{url}||"/api/export/ebisc");
   my $response = $self->ua->get($url);
   die $response->status_line if $response->is_error;
   my $content = eval{decode_json($response->content);};
@@ -45,7 +45,7 @@ sub find_lines {
 
 sub get_line {
   my ($self, $line_name) = @_;
-  my $url = sprintf('%s/api/export/%s', $self->base_url, $line_name);
+  my $url = sprintf('%s/api/export/ebisc/%s', $self->base_url, $line_name);
   my $response = $self->ua->get($url);
   die $response->status_line if $response->is_error;
   my $content = eval{decode_json($response->content);};
